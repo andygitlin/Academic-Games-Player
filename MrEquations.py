@@ -8,7 +8,7 @@ ops = ['+','x','+','+']
 ooo = [0,2,1,0]
 '''
 
-MOP_PERMITTED = True
+MOP_PERMITTED = False
 # if True, allows each operation in ops to be used any number of times (including zero times)
 # if False, every operation in ops is used exactly once (so len(ops) must equal len(nums)-1)
 SIDEWAYS = True
@@ -103,6 +103,7 @@ def try_all(nums_ = [1,2,3,4,5], ops_ = ['+','-','x','/','*','r'], factorial = 1
                                 pass
 
 if __name__ == '__main__':
-    try_all(factorial = 2, run = [884,886,887,889,890,892])
+    try_all()
+
 
 

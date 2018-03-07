@@ -5,22 +5,22 @@ from os.path import isfile, join
 
 ################################################## demands (SET THESE)
 
-PLAYERONE = "SV"
-PLAYERTWO = "NOUN"
-PLAYERTHREE = "DIRECTOBJECT"
+PLAYERONE = ""
+PLAYERTWO = ""
+PLAYERTHREE = ""
 
 COLOR_WILD = ""
-NUMBER_OF_LETTERS = 6
-DOUBLE_VOWEL = True
+NUMBER_OF_LETTERS = 0
+DOUBLE_VOWEL = False
 DOUBLE_CONSONANT = False
 MUST_CONTAIN = ''
 MUST_NOT_CONTAIN = ''
 LETTER_TRANSFER = ['','']
 
-GENERALS = ["COLLECTIVE"]
+GENERALS = []
 
 CLAUSES = ()
-PHRASES = ("APPOSITIVE","ADVERB")
+PHRASES = ()
 
 ################################################## cubes (MAYBE SET THESE)
 
