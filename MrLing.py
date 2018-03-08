@@ -5,19 +5,19 @@ from os.path import isfile, join
 
 ################################################## demands (SET THESE)
 
-PLAYERONE = ""
-PLAYERTWO = ""
-PLAYERTHREE = ""
+PLAYERONE = "SV"
+PLAYERTWO = "NOUN"
+PLAYERTHREE = "SUBJECT"
 
-COLOR_WILD = ""
-NUMBER_OF_LETTERS = 0
-DOUBLE_VOWEL = False
+COLOR_WILD = "YELLOW"
+NUMBER_OF_LETTERS = 6
+DOUBLE_VOWEL = True
 DOUBLE_CONSONANT = False
-MUST_CONTAIN = ''
+MUST_CONTAIN = 'z'
 MUST_NOT_CONTAIN = ''
 LETTER_TRANSFER = ['','']
 
-GENERALS = []
+GENERALS = ["COLLECTIVE"]
 
 CLAUSES = ()
 PHRASES = ()
@@ -29,11 +29,11 @@ USE_CUBES = False
 CUBES = dict()
 
 CUBES["BLACK"] = ""
-CUBES["GREEN"] = ""
-CUBES["ORANGE"] = ""
-CUBES["PINK"] = ""
-CUBES["RED"] = ""
-CUBES["YELLOW"] = ""
+CUBES["GREEN"] = "v"
+CUBES["ORANGE"] = "sdl"
+CUBES["PINK"] = "synn"
+CUBES["RED"] = "fumm"
+CUBES["YELLOW"] = "yxjq"
 
 ################################################## words, dictionary
 
