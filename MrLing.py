@@ -6,20 +6,27 @@ from os.path import isfile, join
 ################################################## demands (SET THESE)
 
 PLAYERONE = "SV"
-PLAYERTWO = "NOUN"
-PLAYERTHREE = "SUBJECT"
+PLAYERTWO = "VERB"
+PLAYERTHREE = "VERBAL"
 
 COLOR_WILD = "YELLOW"
-NUMBER_OF_LETTERS = 6
+NUMBER_OF_LETTERS = 0
 DOUBLE_VOWEL = True
 DOUBLE_CONSONANT = False
-MUST_CONTAIN = 'z'
+MUST_CONTAIN = ''
 MUST_NOT_CONTAIN = ''
 LETTER_TRANSFER = ['','']
 
-GENERALS = ["COLLECTIVE"]
+# functions for infinitive/gerund are specified with ":"
+# for example ":DIRECTOBJECT"
+GENERALS = ["INFINITIVE", ":DIRECTOBJECT"]
 
+# DEPENDENT, ADJECTIVE, ADVERB, NOUN, INFINITIVE (in this order)
+# the order must be preserved
 CLAUSES = ()
+
+# APPOSITIVE, INFINITIVE, GERUND, PARTICIPIAL, PREPOSITIONAL, ADJECTIVE, ADVERB
+# the order must be preserved
 PHRASES = ()
 
 ################################################## cubes (MAYBE SET THESE)
