@@ -2,12 +2,19 @@ import numpy as np
 import pandas as pd
 from os import listdir
 from os.path import isfile, join
+# website stuff
+from flask import Flask, request, render_template, redirect, url_for, flash
+from flask_wtf import FlaskForm
+from wtforms import StringField, IntegerField, SubmitField, SelectMultipleField, RadioField, widgets
+from wtforms.validators import Required
+import re
+
 
 ################################################## demands (SET THESE)
 
-PLAYERONE = "SV"
-PLAYERTWO = "VERB"
-PLAYERTHREE = "VERBAL"
+PLAYERONE = "SVIODO"
+PLAYERTWO = "ADJECTIVE"
+PLAYERTHREE = "PRONOUNMODIFIER"
 
 COLOR_WILD = "YELLOW"
 NUMBER_OF_LETTERS = 0
@@ -19,15 +26,15 @@ LETTER_TRANSFER = ['','']
 
 # functions for infinitive/gerund are specified with ":"
 # for example ":DIRECTOBJECT"
-GENERALS = ["INFINITIVE", ":DIRECTOBJECT"]
+GENERALS = []
 
 # DEPENDENT, ADJECTIVE, ADVERB, NOUN, INFINITIVE (in this order)
 # the order must be preserved
-CLAUSES = ()
+CLAUSES = () # tuple
 
 # APPOSITIVE, INFINITIVE, GERUND, PARTICIPIAL, PREPOSITIONAL, ADJECTIVE, ADVERB
 # the order must be preserved
-PHRASES = ()
+PHRASES = ('INFINITIVE',) # tuple
 
 ################################################## cubes (MAYBE SET THESE)
 
@@ -898,11 +905,124 @@ def construct_correct_sentence():
     return X
 
 def win():
-    print(construct_correct_sentence())
+    return construct_correct_sentence()
+
+################################################## website stuff
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'random string'
+app.debug = True
+
+# enable checkboxes
+class CheckboxField(SelectMultipleField):
+    widget = widgets.ListWidget(prefix_label = False)
+    option_widget = widgets.CheckboxInput()
+
+class StartForm(FlaskForm):
+    player1 = RadioField("Player 1:", choices = [("SV", "S-V"), ("SVDO", "S-V-DO"), ("SVIODO", "S-V-IO-DO"), ("SLVPN", "S-LV-PN"), ("SLVPA", "S-LV-PA"), ("SVDOOC(N)", "S-V-DO-OC(noun)"), ("SVDOOC(A)", "SV-DO-OC(adjective)"), ("SIMPLE", "simple"), ("COMPOUND", "compound"), ("COMPLEX", "complex"), ("COMPOUNDCOMPLEX", "compound-complex"), ("DECLARATIVE", "declarative"), ("INTERROGATIVE", "interrogative"), ("IMPERATIVE", "imperative"), ("EXCLAMATORY", "exclamatory"), ("INVERTED", "inverted")])
+    player2and3 = RadioField("Player 2 and player 3", choices = [("NOUN_SUBJECT", "NOUN Subject"), ("NOUN_DIRECTOBJECT", "NOUN Direct Object"), ("NOUN_INDIRECTOBJECT", "NOUN Indirect Object"), ("NOUN_PREDICATENOUN", "NOUN Predicate Noun"), ("NOUN_OBJECTIVECOMPLEMENT", "NOUN Objective Complement"), ("NOUN_OBJECTOFPREPOSITION", "NOUN Object of the Preposition"), ("NOUN_APPOSITIVE", "NOUN Appositive"), ("NOUN_NOUNUSEDASADJECTIVE", "NOUN Noun Used as Adjective"), ("PRONOUN_SUBJECT", "PRONOUN Subject"), ("PRONOUN_DIRECTOBJECT", "PRONOUN Direct Object"), ("PRONOUN_INDIRECTOBJECT", "PRONOUN Indirect Object"), ("PRONOUN_PREDICATENOUN", "PRONOUN Predicate Noun"), ("PRONOUN_OBJECTIVECOMPLEMENT", "PRONOUN Objective Complement"), ("PRONOUN_OBJECTOFTHEPREPOSITION", "PRONOUN Object of the Preposition"), ("PRONOUN_APPOSITIVE", "PRONOUN Appositive"), ("VERB_MAINVERB", "VERB Main Verb"), ("VERB_VERBAL", "VERB Verbal"), ("VERB_INFINITIVE", "VERB Infinitive"), ("VERB_GERUND", "VERB Gerund"), ("VERB_PARTICIPLE", "VERB Participle"), ("VERB_AUXILIARY", "VERB Auxiliary"), ("ADJECTIVE_NOUNMODIFIER", "ADJECTIVE Noun Modifier"), ("ADJECTIVE_PRONOUNMODIFIER", "ADJECTIVE Pronoun Modifier"), ("ADJECTIVE_PREDICATEADJECTIVE", "ADJECTIVE Predicate Adjective"), ("ADJECTIVE_OBJECTIVECOMPLEMENT", "ADJECTIVE Objective Complement"), ("ADJECTIVE_ADJACENTADJECTIVE", "ADJECTIVE Adjacent Adjective"), ("ADVERB_VERBMODIFIER", "ADVERB Verb Modifier"), ("ADVERB_ADJECTIVEMODIFIER", "ADVERB Adjective Modifier"), ("ADVERB_ADVERBMODIFIER", "ADVERB Adverb Modifier"), ("PREPOSITION_INTROTOADJECTIVE", "PREPOSITION Introductory word in an Adjective Phrase"), ("PREPOSITION_INTROTOADVERB", "PREPOSITION Introductory word in an Adverb Phrase"), ("CONJUNCTION_SUBORDINATOR", "CONJUNCTION Subordinator"), ("CONJUNCTION_CONJUNCTIVE", "CONJUNCTION Conjunctive Adverb"), ("INTERJECTION_", "INTERJECTION ")])
+    colorWild = RadioField("Color Wild", choices = [("", "None"), ("BLACK", "Black"), ("GREEN", "Green"), ("ORANGE", "Orange"), ("PINK", "Pink"), ("RED", "Red"), ("YELLOW", "Yellow")])
+    numLetters = IntegerField("Number of letters:")
+    doubleVowel = RadioField("Double vowel?", choices = [("True", "Yes"), ("False", "No")])
+    doubleConsonant = RadioField("Double consonant?", choices = [("True", "Yes"), ("False", "No")])
+    mustContain = StringField("Must contain:")
+    mustNotContain = StringField("Must not contain:")
+    letterTransfer = StringField("Letter transfer (enter 2 letters; first letter to second letter)")
+    functions = StringField("Functions (i.e. collective, present perfect, etc):")
+    clauses = StringField("Clauses (separate with comma):")
+    phrases = StringField("Phrases (separate with comma):")
+    useCubes = RadioField("Use cubes?", choices = [("True", "Yes"), ("False", "No")])
+    blackCubes = StringField("BLACK:")
+    greenCubes = StringField("GREEN:")
+    orangeCubes = StringField("ORANGE")
+    pinkCubes = StringField("PINK")
+    redCubes = StringField("RED")
+    yellowCubes = StringField("YELLOW")
+    submit = SubmitField('Submit')
+
+
+
+@app.route('/', methods = ['GET', 'POST'])
+def home():
+    global PLAYERONE, PLAYERTWO, PLAYERTHREE, COLOR_WILD, NUMBER_OF_LETTERS, DOUBLE_VOWEL, DOUBLE_CONSONANT, MUST_CONTAIN, MUST_NOT_CONTAIN, LETTER_TRANSFER, GENERALS, CLAUSES, PHRASES
+    form = StartForm()
+    if request.method == 'POST':
+        PLAYERONE = form.player1.data
+        PLAYERTWO, PLAYERTHREE = form.player2and3.data.split('_')
+        COLOR_WILD = form.colorWild.data
+        NUMBER_OF_LETTERS = int(form.numLetters.data) if form.numLetters.data else 0
+        DOUBLE_VOWEL = form.doubleVowel.data == "True"
+        DOUBLE_CONSONANT = form.doubleConsonant.data == "True"
+        MUST_CONTAIN = form.mustContain.data if form.mustContain.data else ""
+        MUST_NOT_CONTAIN = form.mustNotContain.data if form.mustNotContain.data else ""
+        LETTER_TRANSFER = list(form.letterTransfer.data) if form.letterTransfer.data else ["", ""]
+        GENERALS = form.functions.data.upper() if form.functions.data else []
+        CLAUSES = tuple(re.split(r", *", form.clauses.data.upper())) if form.phrases.data else ()
+        PHRASES = tuple(re.split(r", *", form.phrases.data.upper())) if form.phrases.data else ()
+        CUBES = dict()
+        CUBES["BLACK"] = form.blackCubes.data if form.blackCubes.data else ""
+        CUBES["GREEN"] = form.greenCubes.data if form.greenCubes.data else ""
+        CUBES["ORANGE"] = form.orangeCubes.data if form.orangeCubes.data else ""
+        CUBES["PINK"] = form.pinkCubes.data if form.pinkCubes.data else ""
+        CUBES["RED"] = form.redCubes.data if form.redCubes.data else ""
+        CUBES["YELLOW"] = form.yellowCubes.data if form.yellowCubes.data else ""
+
+        return render_template('result.html', sentence = win(), player1 = PLAYERONE, player2 = PLAYERTWO, player3 = PLAYERTHREE, colorWild = COLOR_WILD, numLetters = NUMBER_OF_LETTERS, doubleVowel = DOUBLE_VOWEL, doubleConsonant = DOUBLE_CONSONANT, mustCotain = MUST_CONTAIN, mustNotContain = MUST_NOT_CONTAIN, letterTransfer = LETTER_TRANSFER, functions = GENERALS, clauses = CLAUSES, phrases = PHRASES)
+    return render_template('index.html', form = form)
+
+
+
+
+
+# PLAYERONE = "SVIODO"
+# PLAYERTWO = "NOUN"
+# PLAYERTHREE = "NOUNUSEDASADJECTIVE"
+# 
+# COLOR_WILD = "YELLOW"
+# NUMBER_OF_LETTERS = 0
+# DOUBLE_VOWEL = True
+# DOUBLE_CONSONANT = False
+# MUST_CONTAIN = ''
+# MUST_NOT_CONTAIN = ''
+# LETTER_TRANSFER = ['','']
+# 
+# # functions for infinitive/gerund are specified with ":"
+# # for example ":DIRECTOBJECT"
+# GENERALS = ['COLLECTIVE']
+# 
+# # DEPENDENT, ADJECTIVE, ADVERB, NOUN, INFINITIVE (in this order)
+# # the order must be preserved
+# CLAUSES = () # tuple
+# 
+# # APPOSITIVE, INFINITIVE, GERUND, PARTICIPIAL, PREPOSITIONAL, ADJECTIVE, ADVERB
+# # the order must be preserved
+# PHRASES = ('INFINITIVE',) # tuple
+# USE_CUBES = False
+# 
+# CUBES = dict()
+# 
+# CUBES["BLACK"] = ""
+# CUBES["GREEN"] = "v"
+# CUBES["ORANGE"] = "sdl"
+# CUBES["PINK"] = "synn"
+# CUBES["RED"] = "fumm"
+# CUBES["YELLOW"] = "yxjq"
+
+################################################## cubes (MAYBE SET THESE)
+
+USE_CUBES = False
+
+CUBES = dict()
+
+CUBES["BLACK"] = ""
+CUBES["GREEN"] = "v"
+CUBES["ORANGE"] = "sdl"
+CUBES["PINK"] = "synn"
+CUBES["RED"] = "fumm"
+CUBES["YELLOW"] = "yxjq"
 
 ################################################## main
 
 if __name__ == '__main__':
-    win()
+    app.run()
 
 
