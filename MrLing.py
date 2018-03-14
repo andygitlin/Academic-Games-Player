@@ -902,12 +902,15 @@ class StartForm(FlaskForm):
 
 @app.route('/', methods = ['GET', 'POST'])
 def home():
-    global PLAYERONE, PLAYERTWO, PLAYERTHREE, COLOR_WILD, NUMBER_OF_LETTERS, DOUBLE_VOWEL, DOUBLE_CONSONANT, MUST_CONTAIN, MUST_NOT_CONTAIN, LETTER_TRANSFER, GENERALS, CLAUSES, PHRASES
+    global PLAYERONE, PLAYERTWO, PLAYERTHREE, COLOR_WILD, NUMBER_OF_LETTERS, DOUBLE_VOWEL, DOUBLE_CONSONANT, MUST_CONTAIN, MUST_NOT_CONTAIN, LETTER_TRANSFER, GENERALS, CLAUSES, PHRASES, USE_CUBES, CUBES
     form = StartForm()
     if request.method == 'POST':
+        # first 3 moves
         PLAYERONE = form.player1.data if form.player1.data != "None" else ""
         PLAYERTWO, PLAYERTHREE = form.player2and3.data.split('_') if form.player2and3.data != "None" else ["", ""]
         COLOR_WILD = form.colorWild.data
+        
+        # general demands
         NUMBER_OF_LETTERS = int(form.numLetters.data) if form.numLetters.data else 0
         DOUBLE_VOWEL = form.doubleVowel.data == "True"
         DOUBLE_CONSONANT = form.doubleConsonant.data == "True"
@@ -917,32 +920,27 @@ def home():
         GENERALS = list(re.split(r", *", form.functions.data.upper())) if form.functions.data else []
         CLAUSES = tuple(re.split(r", *", form.clauses.data.upper())) if len(form.clauses.data) > 1 else tuple()
         PHRASES = tuple(re.split(r", *", form.phrases.data.upper())) if len(form.phrases.data) > 1 else tuple()
+
+        # cubes
         CUBES = dict()
+        USE_CUBES = False
         CUBES["BLACK"] = form.blackCubes.data if form.blackCubes.data else ""
         CUBES["GREEN"] = form.greenCubes.data if form.greenCubes.data else ""
         CUBES["ORANGE"] = form.orangeCubes.data if form.orangeCubes.data else ""
         CUBES["PINK"] = form.pinkCubes.data if form.pinkCubes.data else ""
         CUBES["RED"] = form.redCubes.data if form.redCubes.data else ""
         CUBES["YELLOW"] = form.yellowCubes.data if form.yellowCubes.data else ""
+        for cube in CUBES:
+            if CUBES[cube]:
+                USE_CUBES = True
 
+        # search for solution
         solution = win()
 
+        # display solution
         return render_template('result.html', sentence = solution, sentenceLength = len(solution.split()), player1 = PLAYERONE, player2 = PLAYERTWO, player3 = PLAYERTHREE, colorWild = COLOR_WILD, numLetters = NUMBER_OF_LETTERS, doubleVowel = DOUBLE_VOWEL, doubleConsonant = DOUBLE_CONSONANT, mustCotain = MUST_CONTAIN, mustNotContain = MUST_NOT_CONTAIN, letterTransfer = LETTER_TRANSFER, functions = GENERALS, clauses = CLAUSES, phrases = PHRASES)
     return render_template('index.html', form = form)
 
-
-################################################## cubes (MAYBE SET THESE)
-
-USE_CUBES = False
-
-CUBES = dict()
-
-CUBES["BLACK"] = ""
-CUBES["GREEN"] = "v"
-CUBES["ORANGE"] = "sdl"
-CUBES["PINK"] = "synn"
-CUBES["RED"] = "fumm"
-CUBES["YELLOW"] = "yxjq"
 
 ################################################## main
 
