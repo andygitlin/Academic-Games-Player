@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Mr. Ling Result</title>
+</head>
+<body>
+  
+{% block content %}
+  <h1>{{ sentence }}</h1>
+  <h2>Demands</h2>
+  <p>1: {{ player1 }}</p>
+  <p>2: {{ player2 }}</p>
+  <p>3: {{ player3 }}</p>
+  <p>color wild: {{ colorWild }}</p>
+  <p>number of letters: {{ numLetters }}</p>
+  <p>double vowel: {{ doubleVowel }}</p>
+  <p>doiuble consonant: {{ doubleConsonant }}</p>
+  <p>must contain: {{ mustContain }}</p>
+  <p>must not contain: {{ mustNotContain }}</p>
+  <p>letter transfer: {{ letterTransfer }}</p>
+  <p>functions: {{ functions }}</p>
+  <p>clauses: {{ clauses }}</p>
+  <p>phrases: {{ phrases }}</p>
+  <p>black cubes: {{ blackCubes }}</p>
+  <p>green cubes: {{ greenCubes }}</p>
+  <p>orange cubes: {{ orangeCubes }}</p>
+  <p>pink cubes: {{ pinkCubes }}</p>
+  <p>red cubes: {{ redCubes }}</p>
+{% endblock %}
+</body>
+</html>
