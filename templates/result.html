@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Mr. Ling Result</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
   
 {% block content %}
   <h1>{{ sentence }}</h1>
+  <h2>{{ sentenceLength }} words</h2>
   <h2>Demands</h2>
   <p>1: {{ player1 }}</p>
   <p>2: {{ player2 }}</p>

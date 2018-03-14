@@ -9,48 +9,7 @@ from wtforms import StringField, IntegerField, SubmitField, SelectMultipleField,
 from wtforms.validators import Required
 import re
 
-
-################################################## demands (SET THESE)
-
-PLAYERONE = "SVIODO"
-PLAYERTWO = "ADJECTIVE"
-PLAYERTHREE = "PRONOUNMODIFIER"
-
-COLOR_WILD = "YELLOW"
-NUMBER_OF_LETTERS = 0
-DOUBLE_VOWEL = True
-DOUBLE_CONSONANT = False
-MUST_CONTAIN = ''
-MUST_NOT_CONTAIN = ''
-LETTER_TRANSFER = ['','']
-
-# functions for infinitive/gerund are specified with ":"
-# for example ":DIRECTOBJECT"
-GENERALS = []
-
-# DEPENDENT, ADJECTIVE, ADVERB, NOUN, INFINITIVE (in this order)
-# the order must be preserved
-CLAUSES = () # tuple
-
-# APPOSITIVE, INFINITIVE, GERUND, PARTICIPIAL, PREPOSITIONAL, ADJECTIVE, ADVERB
-# the order must be preserved
-PHRASES = ('INFINITIVE',) # tuple
-
-################################################## cubes (MAYBE SET THESE)
-
-USE_CUBES = False
-
-CUBES = dict()
-
-CUBES["BLACK"] = ""
-CUBES["GREEN"] = "v"
-CUBES["ORANGE"] = "sdl"
-CUBES["PINK"] = "synn"
-CUBES["RED"] = "fumm"
-CUBES["YELLOW"] = "yxjq"
-
 ################################################## words, dictionary
-
 class Word:
     def __init__(self, word, POS, specials,
                  use = None, usei = None, cat = None):
@@ -946,8 +905,8 @@ def home():
     global PLAYERONE, PLAYERTWO, PLAYERTHREE, COLOR_WILD, NUMBER_OF_LETTERS, DOUBLE_VOWEL, DOUBLE_CONSONANT, MUST_CONTAIN, MUST_NOT_CONTAIN, LETTER_TRANSFER, GENERALS, CLAUSES, PHRASES
     form = StartForm()
     if request.method == 'POST':
-        PLAYERONE = form.player1.data
-        PLAYERTWO, PLAYERTHREE = form.player2and3.data.split('_')
+        PLAYERONE = form.player1.data if form.player1.data != "None" else ""
+        PLAYERTWO, PLAYERTHREE = form.player2and3.data.split('_') if form.player2and3.data != "None" else ["", ""]
         COLOR_WILD = form.colorWild.data
         NUMBER_OF_LETTERS = int(form.numLetters.data) if form.numLetters.data else 0
         DOUBLE_VOWEL = form.doubleVowel.data == "True"
@@ -955,9 +914,9 @@ def home():
         MUST_CONTAIN = form.mustContain.data if form.mustContain.data else ""
         MUST_NOT_CONTAIN = form.mustNotContain.data if form.mustNotContain.data else ""
         LETTER_TRANSFER = list(form.letterTransfer.data) if form.letterTransfer.data else ["", ""]
-        GENERALS = form.functions.data.upper() if form.functions.data else []
-        CLAUSES = tuple(re.split(r", *", form.clauses.data.upper())) if form.phrases.data else ()
-        PHRASES = tuple(re.split(r", *", form.phrases.data.upper())) if form.phrases.data else ()
+        GENERALS = list(re.split(r", *", form.functions.data.upper())) if form.functions.data else []
+        CLAUSES = tuple(re.split(r", *", form.clauses.data.upper())) if len(form.clauses.data) > 1 else tuple()
+        PHRASES = tuple(re.split(r", *", form.phrases.data.upper())) if len(form.phrases.data) > 1 else tuple()
         CUBES = dict()
         CUBES["BLACK"] = form.blackCubes.data if form.blackCubes.data else ""
         CUBES["GREEN"] = form.greenCubes.data if form.greenCubes.data else ""
@@ -966,46 +925,11 @@ def home():
         CUBES["RED"] = form.redCubes.data if form.redCubes.data else ""
         CUBES["YELLOW"] = form.yellowCubes.data if form.yellowCubes.data else ""
 
-        return render_template('result.html', sentence = win(), player1 = PLAYERONE, player2 = PLAYERTWO, player3 = PLAYERTHREE, colorWild = COLOR_WILD, numLetters = NUMBER_OF_LETTERS, doubleVowel = DOUBLE_VOWEL, doubleConsonant = DOUBLE_CONSONANT, mustCotain = MUST_CONTAIN, mustNotContain = MUST_NOT_CONTAIN, letterTransfer = LETTER_TRANSFER, functions = GENERALS, clauses = CLAUSES, phrases = PHRASES)
+        solution = win()
+
+        return render_template('result.html', sentence = solution, sentenceLength = len(solution.split()), player1 = PLAYERONE, player2 = PLAYERTWO, player3 = PLAYERTHREE, colorWild = COLOR_WILD, numLetters = NUMBER_OF_LETTERS, doubleVowel = DOUBLE_VOWEL, doubleConsonant = DOUBLE_CONSONANT, mustCotain = MUST_CONTAIN, mustNotContain = MUST_NOT_CONTAIN, letterTransfer = LETTER_TRANSFER, functions = GENERALS, clauses = CLAUSES, phrases = PHRASES)
     return render_template('index.html', form = form)
 
-
-
-
-
-# PLAYERONE = "SVIODO"
-# PLAYERTWO = "NOUN"
-# PLAYERTHREE = "NOUNUSEDASADJECTIVE"
-# 
-# COLOR_WILD = "YELLOW"
-# NUMBER_OF_LETTERS = 0
-# DOUBLE_VOWEL = True
-# DOUBLE_CONSONANT = False
-# MUST_CONTAIN = ''
-# MUST_NOT_CONTAIN = ''
-# LETTER_TRANSFER = ['','']
-# 
-# # functions for infinitive/gerund are specified with ":"
-# # for example ":DIRECTOBJECT"
-# GENERALS = ['COLLECTIVE']
-# 
-# # DEPENDENT, ADJECTIVE, ADVERB, NOUN, INFINITIVE (in this order)
-# # the order must be preserved
-# CLAUSES = () # tuple
-# 
-# # APPOSITIVE, INFINITIVE, GERUND, PARTICIPIAL, PREPOSITIONAL, ADJECTIVE, ADVERB
-# # the order must be preserved
-# PHRASES = ('INFINITIVE',) # tuple
-# USE_CUBES = False
-# 
-# CUBES = dict()
-# 
-# CUBES["BLACK"] = ""
-# CUBES["GREEN"] = "v"
-# CUBES["ORANGE"] = "sdl"
-# CUBES["PINK"] = "synn"
-# CUBES["RED"] = "fumm"
-# CUBES["YELLOW"] = "yxjq"
 
 ################################################## cubes (MAYBE SET THESE)
 
