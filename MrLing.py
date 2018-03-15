@@ -11,6 +11,7 @@ from wtforms.validators import Required
 import re
 
 ################################################## words, dictionary
+
 class Word:
     def __init__(self, word, POS, specials,
                  use = None, usei = None, cat = None):
@@ -767,6 +768,9 @@ def get_basic_sentence_fragment(P1, P2, P3):
     # input: player one demand P1, player two demand P2, player three demand P3
     c = CLAUSES
     p = PHRASES
+    if (c,p) not in BASIC_SENTENCE_FRAGMENTS.keys():
+        c = c[::-1]
+        p = p[::-1]
     if P1 == "SIMPLE" or P1 == "COMPOUND":
         return "{0}" if p == () else SIMPLE_SENTENCE_FRAGMENTS[((),p)]
     if P2 == "NOUN" or P2 == "PRONOUN":
