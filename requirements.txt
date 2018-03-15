@@ -7,8 +7,14 @@ idna==2.6
 itsdangerous==0.24
 Jinja2==2.10
 MarkupSafe==1.0
-numpy==1.11.0
-pandas==0.20.3
+numpy==1.14.2
+pandas==0.22.0
+python-dateutil==2.7.0
+pytz==2017.3
 request==0.0.22
+six==1.11.0
+urllib3==1.22
+Werkzeug==0.14.1
+whitenoise==3.3.1
 WTForms==2.1
 
