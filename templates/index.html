@@ -14,13 +14,13 @@
       {% for message in get_flashed_messages() %}
         {{ message }}
       {% endfor %}
-      <p class="player1">{{ form.player1.label}}{{ form.player1() }}</p>
-      <p class="player2and3">{{ form.player2and3.label}}{{ form.player2and3() }}</p>
+      <p class="player1">{{ form.player1.label }} {{ form.player1() }}</p>
+      <p class="player2and3">{{ form.player2and3.label }} {{ form.player2and3() }}</p>
 
-      <p class="colorWild">{{ form.colorWild.label}}{{ form.colorWild() }}</p>
-      <p class="numLetters">{{ form.numLetters.label }}{{ form.numLetters() }}</p>
-      <p class="doubleVowel">{{ form.doubleVowel.label}}{{ form.doubleVowel() }}</p>
-      <p class="doubleConsonant"> {{ form.doubleConsonant.label}}{{ form.doubleConsonant() }}</p>
+      <p class="colorWild">{{ form.colorWild.label }} {{ form.colorWild() }}</p>
+      <p class="numLetters">{{ form.numLetters.label }} {{ form.numLetters() }}</p>
+      <p class="doubleVowel">{{ form.doubleVowel.label }} {{ form.doubleVowel() }}</p>
+      <p class="doubleConsonant"> {{ form.doubleConsonant.label }}{{ form.doubleConsonant() }}</p>
       <p class="mustContain">{{ form.mustContain.label }} {{ form.mustContain() }}</p>
       <p class="mustNotContain">{{ form.mustNotContain.label }} {{ form.mustNotContain() }}</p>
       <p class="letterTransfer">{{ form.letterTransfer.label }} {{ form.letterTransfer() }}</p>

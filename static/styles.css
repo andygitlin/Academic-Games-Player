@@ -1,4 +1,16 @@
 p {
-    font-size: 1.5em;
-    line-height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 2rem;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+li {
+    list-style: none;
 }
