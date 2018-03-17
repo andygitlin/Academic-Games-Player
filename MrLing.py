@@ -6,7 +6,7 @@ from os.path import isfile, join
 # website stuff
 from flask import Flask, request, render_template, redirect, url_for, flash
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SubmitField, SelectMultipleField, RadioField, widgets
+from wtforms import StringField, IntegerField, SubmitField, SelectField, SelectMultipleField, RadioField, widgets
 from wtforms.validators import Required
 import re
 
@@ -897,9 +897,9 @@ class CheckboxField(SelectMultipleField):
     option_widget = widgets.CheckboxInput()
 
 class StartForm(FlaskForm):
-    player1 = RadioField("Player 1:", choices = [("SV", "S-V"), ("SVDO", "S-V-DO"), ("SVIODO", "S-V-IO-DO"), ("SLVPN", "S-LV-PN"), ("SLVPA", "S-LV-PA"), ("SVDOOC(N)", "S-V-DO-OC(noun)"), ("SVDOOC(A)", "SV-DO-OC(adjective)"), ("SIMPLE", "simple"), ("COMPOUND", "compound"), ("COMPLEX", "complex"), ("COMPOUNDCOMPLEX", "compound-complex"), ("DECLARATIVE", "declarative"), ("INTERROGATIVE", "interrogative"), ("IMPERATIVE", "imperative"), ("EXCLAMATORY", "exclamatory"), ("INVERTED", "inverted")])
-    player2and3 = RadioField("Player 2 and player 3", choices = [("NOUN_SUBJECT", "NOUN Subject"), ("NOUN_DIRECTOBJECT", "NOUN Direct Object"), ("NOUN_INDIRECTOBJECT", "NOUN Indirect Object"), ("NOUN_PREDICATENOUN", "NOUN Predicate Noun"), ("NOUN_OBJECTIVECOMPLEMENT", "NOUN Objective Complement"), ("NOUN_OBJECTOFPREPOSITION", "NOUN Object of the Preposition"), ("NOUN_APPOSITIVE", "NOUN Appositive"), ("NOUN_NOUNUSEDASADJECTIVE", "NOUN Noun Used as Adjective"), ("PRONOUN_SUBJECT", "PRONOUN Subject"), ("PRONOUN_DIRECTOBJECT", "PRONOUN Direct Object"), ("PRONOUN_INDIRECTOBJECT", "PRONOUN Indirect Object"), ("PRONOUN_PREDICATENOUN", "PRONOUN Predicate Noun"), ("PRONOUN_OBJECTIVECOMPLEMENT", "PRONOUN Objective Complement"), ("PRONOUN_OBJECTOFPREPOSITION", "PRONOUN Object of the Preposition"), ("PRONOUN_APPOSITIVE", "PRONOUN Appositive"), ("VERB_MAINVERB", "VERB Main Verb"), ("VERB_VERBAL", "VERB Verbal"), ("VERB_INFINITIVE", "VERB Infinitive"), ("VERB_GERUND", "VERB Gerund"), ("VERB_PARTICIPLE", "VERB Participle"), ("VERB_AUXILIARY", "VERB Auxiliary"), ("ADJECTIVE_NOUNMODIFIER", "ADJECTIVE Noun Modifier"), ("ADJECTIVE_PRONOUNMODIFIER", "ADJECTIVE Pronoun Modifier"), ("ADJECTIVE_PREDICATEADJECTIVE", "ADJECTIVE Predicate Adjective"), ("ADJECTIVE_OBJECTIVECOMPLEMENT", "ADJECTIVE Objective Complement"), ("ADJECTIVE_ADJACENTADJECTIVE", "ADJECTIVE Adjacent Adjective"), ("ADVERB_VERBMODIFIER", "ADVERB Verb Modifier"), ("ADVERB_ADJECTIVEMODIFIER", "ADVERB Adjective Modifier"), ("ADVERB_ADVERBMODIFIER", "ADVERB Adverb Modifier"), ("PREPOSITION_INTROTOADJECTIVE", "PREPOSITION Introductory word in an Adjective Phrase"), ("PREPOSITION_INTROTOADVERB", "PREPOSITION Introductory word in an Adverb Phrase"), ("CONJUNCTION_SUBORDINATOR", "CONJUNCTION Subordinator"), ("CONJUNCTION_CONJUNCTIVE", "CONJUNCTION Conjunctive Adverb"), ("INTERJECTION_", "INTERJECTION ")])
-    colorWild = RadioField("Color Wild", choices = [("", "None"), ("BLACK", "Black"), ("GREEN", "Green"), ("ORANGE", "Orange"), ("PINK", "Pink"), ("RED", "Red"), ("YELLOW", "Yellow")])
+    player1 = SelectField("Player 1", choices = [("SV", "S-V"), ("SVDO", "S-V-DO"), ("SVIODO", "S-V-IO-DO"), ("SLVPN", "S-LV-PN"), ("SLVPA", "S-LV-PA"), ("SVDOOC(N)", "S-V-DO-OC(noun)"), ("SVDOOC(A)", "SV-DO-OC(adjective)"), ("SIMPLE", "simple"), ("COMPOUND", "compound"), ("COMPLEX", "complex"), ("COMPOUNDCOMPLEX", "compound-complex"), ("DECLARATIVE", "declarative"), ("INTERROGATIVE", "interrogative"), ("IMPERATIVE", "imperative"), ("EXCLAMATORY", "exclamatory"), ("INVERTED", "inverted")])
+    player2and3 = SelectField("Player 2 and player 3", choices = [("NOUN_SUBJECT", "NOUN Subject"), ("NOUN_DIRECTOBJECT", "NOUN Direct Object"), ("NOUN_INDIRECTOBJECT", "NOUN Indirect Object"), ("NOUN_PREDICATENOUN", "NOUN Predicate Noun"), ("NOUN_OBJECTIVECOMPLEMENT", "NOUN Objective Complement"), ("NOUN_OBJECTOFPREPOSITION", "NOUN Object of the Preposition"), ("NOUN_APPOSITIVE", "NOUN Appositive"), ("NOUN_NOUNUSEDASADJECTIVE", "NOUN Noun Used as Adjective"), ("PRONOUN_SUBJECT", "PRONOUN Subject"), ("PRONOUN_DIRECTOBJECT", "PRONOUN Direct Object"), ("PRONOUN_INDIRECTOBJECT", "PRONOUN Indirect Object"), ("PRONOUN_PREDICATENOUN", "PRONOUN Predicate Noun"), ("PRONOUN_OBJECTIVECOMPLEMENT", "PRONOUN Objective Complement"), ("PRONOUN_OBJECTOFPREPOSITION", "PRONOUN Object of the Preposition"), ("PRONOUN_APPOSITIVE", "PRONOUN Appositive"), ("VERB_MAINVERB", "VERB Main Verb"), ("VERB_VERBAL", "VERB Verbal"), ("VERB_INFINITIVE", "VERB Infinitive"), ("VERB_GERUND", "VERB Gerund"), ("VERB_PARTICIPLE", "VERB Participle"), ("VERB_AUXILIARY", "VERB Auxiliary"), ("ADJECTIVE_NOUNMODIFIER", "ADJECTIVE Noun Modifier"), ("ADJECTIVE_PRONOUNMODIFIER", "ADJECTIVE Pronoun Modifier"), ("ADJECTIVE_PREDICATEADJECTIVE", "ADJECTIVE Predicate Adjective"), ("ADJECTIVE_OBJECTIVECOMPLEMENT", "ADJECTIVE Objective Complement"), ("ADJECTIVE_ADJACENTADJECTIVE", "ADJECTIVE Adjacent Adjective"), ("ADVERB_VERBMODIFIER", "ADVERB Verb Modifier"), ("ADVERB_ADJECTIVEMODIFIER", "ADVERB Adjective Modifier"), ("ADVERB_ADVERBMODIFIER", "ADVERB Adverb Modifier"), ("PREPOSITION_INTROTOADJECTIVE", "PREPOSITION Introductory word in an Adjective Phrase"), ("PREPOSITION_INTROTOADVERB", "PREPOSITION Introductory word in an Adverb Phrase"), ("CONJUNCTION_SUBORDINATOR", "CONJUNCTION Subordinator"), ("CONJUNCTION_CONJUNCTIVE", "CONJUNCTION Conjunctive Adverb"), ("INTERJECTION_", "INTERJECTION ")])
+    colorWild = SelectField("Color Wild", choices = [("", "None"), ("BLACK", "Black"), ("GREEN", "Green"), ("ORANGE", "Orange"), ("PINK", "Pink"), ("RED", "Red"), ("YELLOW", "Yellow")])
     numLetters = IntegerField("Number of letters:")
     doubleVowel = RadioField("Double vowel?", choices = [("True", "Yes"), ("False", "No")])
     doubleConsonant = RadioField("Double consonant?", choices = [("True", "Yes"), ("False", "No")])
@@ -910,8 +910,8 @@ class StartForm(FlaskForm):
     clauses = StringField("Clauses (separate with comma):")
     phrases = StringField("Phrases (separate with comma):")
     useCubes = RadioField("Use cubes?", choices = [("True", "Yes"), ("False", "No")])
-    blackCubes = StringField("BLACK:")
-    greenCubes = StringField("GREEN:")
+    blackCubes = StringField("BLACK")
+    greenCubes = StringField("GREEN")
     orangeCubes = StringField("ORANGE")
     pinkCubes = StringField("PINK")
     redCubes = StringField("RED")
