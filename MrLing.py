@@ -11,6 +11,7 @@ from wtforms.validators import Required
 import re
 
 ################################################## words, dictionary
+
 class Word:
     def __init__(self, word, POS, specials,
                  use = None, usei = None, cat = None):
@@ -339,6 +340,7 @@ BASIC_SENTENCE_FRAGMENTS[(("ADJECTIVE",),())] = "because people who said, \"{0},
 BASIC_SENTENCE_FRAGMENTS[(("ADVERB",),())] = "because saying, \"{0},\" is bad"
 BASIC_SENTENCE_FRAGMENTS[(("NOUN",),())] = "because saying, \"{0},\" is bad"
 BASIC_SENTENCE_FRAGMENTS[(("INFINITIVE",),())] = "because wanting him to say, \"{0},\" is bad"
+BASIC_SENTENCE_FRAGMENTS[(("KRINGLE",),())] = BASIC_SENTENCE_FRAGMENTS[(("DEPENDENT",),())] + " on Christmas"
 
 ##### One Clause, One Phrase
 
@@ -382,6 +384,14 @@ BASIC_SENTENCE_FRAGMENTS[(("INFINITIVE",),("PREPOSITIONAL",))] = "because wantin
 BASIC_SENTENCE_FRAGMENTS[(("INFINITIVE",),("ADJECTIVE",))] = "because wanting him to write books about saying, \"{0},\" is bad"
 BASIC_SENTENCE_FRAGMENTS[(("INFINITIVE",),("ADVERB",))] = "because wanting him to think about saying, \"{0},\" is bad"
 
+BASIC_SENTENCE_FRAGMENTS[(("KRINGLE",),("APPOSITIVE",))] = BASIC_SENTENCE_FRAGMENTS[((),("APPOSITIVE",))] + " on Christmas"
+BASIC_SENTENCE_FRAGMENTS[(("KRINGLE",),("INFINITIVE",))] = BASIC_SENTENCE_FRAGMENTS[((),("INFINITIVE",))] + " on Christmas"
+BASIC_SENTENCE_FRAGMENTS[(("KRINGLE",),("GERUND",))] = BASIC_SENTENCE_FRAGMENTS[((),("GERUND",))] + " on Christmas"
+BASIC_SENTENCE_FRAGMENTS[(("KRINGLE",),("PARTICIPIAL",))] = BASIC_SENTENCE_FRAGMENTS[((),("PARTICIPIAL",))] + " on Christmas"
+BASIC_SENTENCE_FRAGMENTS[(("KRINGLE",),("PREPOSITIONAL",))] = BASIC_SENTENCE_FRAGMENTS[((),("PREPOSITIONAL",))] + " on Christmas"
+BASIC_SENTENCE_FRAGMENTS[(("KRINGLE",),("ADJECTIVE",))] = BASIC_SENTENCE_FRAGMENTS[((),("ADJECTIVE",))] + " on Christmas"
+BASIC_SENTENCE_FRAGMENTS[(("KRINGLE",),("ADVERB",))] = BASIC_SENTENCE_FRAGMENTS[((),("ADVERB",))] + " on Christmas"
+
 ##### Two Clauses, No Phrases
 
 BASIC_SENTENCE_FRAGMENTS[(("DEPENDENT","ADJECTIVE"),())] = BASIC_SENTENCE_FRAGMENTS[(("ADJECTIVE",),())]
@@ -397,6 +407,12 @@ BASIC_SENTENCE_FRAGMENTS[(("ADVERB","NOUN"),())] = "because people saying, \"{0}
 BASIC_SENTENCE_FRAGMENTS[(("ADVERB","INFINITIVE"),())] = "because wanting him to say, \"{0},\" is bad"
 
 BASIC_SENTENCE_FRAGMENTS[(("NOUN","INFINITIVE"),())] = BASIC_SENTENCE_FRAGMENTS[(("INFINITIVE",),())]
+
+BASIC_SENTENCE_FRAGMENTS[(("KRINGLE","DEPENDENT"),())] = BASIC_SENTENCE_FRAGMENTS[(("DEPENDENT",),())] + " on Christmas"
+BASIC_SENTENCE_FRAGMENTS[(("KRINGLE","ADJECTIVE"),())] = BASIC_SENTENCE_FRAGMENTS[(("ADJECTIVE",),())] + " on Christmas"
+BASIC_SENTENCE_FRAGMENTS[(("KRINGLE","ADVERB"),())] = BASIC_SENTENCE_FRAGMENTS[(("ADVERB",),())] + " on Christmas"
+BASIC_SENTENCE_FRAGMENTS[(("KRINGLE","NOUN"),())] = BASIC_SENTENCE_FRAGMENTS[(("NOUN",),())] + " on Christmas"
+BASIC_SENTENCE_FRAGMENTS[(("KRINGLE","INFINITIVE"),())] = BASIC_SENTENCE_FRAGMENTS[(("INFINITIVE",),())] + " on Christmas"
 
 ########## Sentences
 
@@ -767,6 +783,9 @@ def get_basic_sentence_fragment(P1, P2, P3):
     # input: player one demand P1, player two demand P2, player three demand P3
     c = CLAUSES
     p = PHRASES
+    if (c,p) not in BASIC_SENTENCE_FRAGMENTS.keys():
+        c = c[::-1]
+        p = p[::-1]
     if P1 == "SIMPLE" or P1 == "COMPOUND":
         return "{0}" if p == () else SIMPLE_SENTENCE_FRAGMENTS[((),p)]
     if P2 == "NOUN" or P2 == "PRONOUN":
