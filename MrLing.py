@@ -246,6 +246,9 @@ def word_is_valid(w, P1, P2, P3):
         if P1 in ["SIMPLE","COMPOUND"] and PHRASES != ():
             if "INTERROGATIVE" in w.specials or "RELATIVE" in w.specials:
                 return False
+        if P3 == "APPOSITIVE":
+            if "INTERROGATIVE" in w.specials or "RELATIVE" in w.specials:
+                return False
     return True
 
 ################################################## sentence building blocks
