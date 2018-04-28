@@ -461,9 +461,9 @@ SIMPLE_FRAGMENTS["NOUN_DIRECTOBJECT"] = "consider the {0}"
 SIMPLE_FRAGMENTS["NOUN_INDIRECTOBJECT"] = "give the {0} consideration"
 SIMPLE_FRAGMENTS["NOUN_PREDICATENOUN"] = "be the {0}"
 SIMPLE_FRAGMENTS["NOUN_OBJECTOFPREPOSITION"] = "think about the {0}"
-SIMPLE_FRAGMENTS["NOUN_APPOSITIVE"] = "be the reason, the {0}"
+SIMPLE_FRAGMENTS["NOUN_APPOSITIVE"] = "be the reason, the {0},"
 SIMPLE_FRAGMENTS["NOUN_NOUNUSEDASADJECTIVE"] = "consider the {0} considerer"
-SIMPLE_FRAGMENTS["NOUN_APPOSITIVE_OBJECTIVECASE"] = "consider the reason, the {0}"
+SIMPLE_FRAGMENTS["NOUN_APPOSITIVE_OBJECTIVECASE"] = "consider the reason, the {0},"
 
 ##### Pronoun Fragments
 
@@ -485,8 +485,8 @@ SIMPLE_FRAGMENTS["PRONOUN_DIRECTOBJECT"] = "consider {0}"
 SIMPLE_FRAGMENTS["PRONOUN_INDIRECTOBJECT"] = "give {0} consideration"
 SIMPLE_FRAGMENTS["PRONOUN_PREDICATENOUN"] = "be {0}"
 SIMPLE_FRAGMENTS["PRONOUN_OBJECTOFPREPOSITION"] = "think about {0}"
-SIMPLE_FRAGMENTS["PRONOUN_APPOSITIVE"] = "be the reason, {0}"
-SIMPLE_FRAGMENTS["PRONOUN_APPOSITIVE_OBJECTIVECASE"] = "I considered the reason, {0}"
+SIMPLE_FRAGMENTS["PRONOUN_APPOSITIVE"] = "be the reason, {0},"
+SIMPLE_FRAGMENTS["PRONOUN_APPOSITIVE_OBJECTIVECASE"] = "consider the reason, {0},"
 
 # interrogative
 
@@ -537,8 +537,8 @@ SIMPLE_FRAGMENTS["PERSONAL_PRONOUN_DIRECTOBJECT_OBJECTIVECASE"] = "consider {0}"
 SIMPLE_FRAGMENTS["PERSONAL_PRONOUN_INDIRECTOBJECT_OBJECTIVECASE"] = "give {0} consideration"
 SIMPLE_FRAGMENTS["PERSONAL_PRONOUN_PREDICATENOUN_NOMINATIVECASE"] = "be {0}"
 SIMPLE_FRAGMENTS["PERSONAL_PRONOUN_OBJECTOFPREPOSITION_OBJECTIVECASE"] = "think about {0}"
-SIMPLE_FRAGMENTS["PERSONAL_PRONOUN_APPOSITIVE_NOMINATIVECASE"] = "be the reason, {0}"
-SIMPLE_FRAGMENTS["PERSONAL_PRONOUN_APPOSITIVE_OBJECTIVECASE"] = "I considered the reason, {0}"
+SIMPLE_FRAGMENTS["PERSONAL_PRONOUN_APPOSITIVE_NOMINATIVECASE"] = "be the reason, {0},"
+SIMPLE_FRAGMENTS["PERSONAL_PRONOUN_APPOSITIVE_OBJECTIVECASE"] = "consider the reason, {0},"
 
 ##### Verb Fragments
 
@@ -876,6 +876,7 @@ def construct_correct_sentence():
     B = get_fragment(P1,P2,P3,www)
     C = get_basic_sentence_fragment(P1,P2,P3)
     X = A.format(C.format(B))
+    X = X.replace(",.",".")
     X = X.replace("?,","?")
     X = X.replace("?.","?")
     Xfind = X.find("? and")
