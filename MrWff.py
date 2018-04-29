@@ -53,20 +53,31 @@ class WFF_Info:
 WFF_Dict = {}
 current_line = 1
 
-def print_line(wff):
+def print_line(wff,repeat=False):
     wff_info = WFF_Dict[wff]
-    parent_lines = ','.join([str(WFF_Dict[p].line) for p in wff_info.parents])
-    q = "{0:<2}) {1:<12} {2:>10} {3}".format(wff_info.line, str(wff), wff_info.rule, parent_lines)
+    parents_list = [str(WFF_Dict[p].line) for p in wff_info.parents]
+    if repeat:
+        parents_list = [parents_list[0],str(current_line-1)]
+    parent_lines = ', '.join(parents_list)
+    q = "{0:<2}) | {1:<12} {2:>10} {3}".format(wff_info.line, str(wff), wff_info.rule, parent_lines)
     print(q)
 
 def print_proof(wff):
     global current_line
     parents_list = WFF_Dict[wff].parents
+    repeat = False
     for p in parents_list:
         if not WFF_Dict[p].line:
             print_proof(p)
+    if len(parents_list) == 2:
+        if parents_list[0] == parents_list[1]:
+            repeat = True
+            p = parents_list[0]
+            q = "{0:<2}) | {1:<12} {2:>10} {3}".format(current_line, str(p), "Rp", WFF_Dict[p].line)
+            print(q)
+            current_line += 1
     WFF_Dict[wff].set_line(current_line)
-    print_line(wff)
+    print_line(wff,repeat)
     current_line += 1
 
 def start(start_wffs):
@@ -125,13 +136,15 @@ def look_for_proof(start_wffs,end_wff):
         for wff in current_wffs:
             apply_rules(wff)
         for i in range(len(current_wffs)):
-            for j in range(i+1,len(current_wffs)):
+            for j in range(i,len(current_wffs)):
                 apply_rules(current_wffs[i],current_wffs[j])
         L = WFF_Dict.keys()
+    print("    | {0} -> {1}".format(', '.join(start_wffs),str(end_wff)))
+    print('-----------------------------------')
     for k in WFF_Dict.keys():
         if WFF_Dict[k].rule == 's':
             print_proof(k)
-    print('-----')
+    print('----------')
     wff = None
     for k in WFF_Dict.keys():
         if str(k) == str(end_wff):
@@ -172,8 +185,13 @@ def test5():
     #look_for_proof(['Eqp','q', 'r'],'Kpr')
     look_for_proof(['Eqp','q','r'],'KCpqKpr')
 
+def test6():
+    #look_for_proof(['p'],'Kpp')
+    #look_for_proof(['Cqp','q'],'Kpp')
+    look_for_proof(['Kqs','Krp'],'KKssr')
+
 ##### main
 
 if __name__ == '__main__':
-    test5()
+    test6()
 
