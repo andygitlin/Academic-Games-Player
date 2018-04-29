@@ -859,8 +859,13 @@ def get_fragment(P1, P2, P3, w):
                 key = key + "_MUCH"
             elif "POST" in w.specials:
                 key = key + "_POST"
-    if (P1 == "SIMPLE" or P1 == "COMPOUND") and PHRASES != ():
-        return SIMPLE_FRAGMENTS[key].format(w.word)
+    if P1 == "SIMPLE" or P1 == "COMPOUND":
+        if CLAUSES != ():
+            return SIMPLE_FRAGMENTS["badkey"]
+        if PHRASES != ():
+            if P3 == "SUBJECT":
+                return SIMPLE_FRAGMENTS["badkey"]
+            return SIMPLE_FRAGMENTS[key].format(w.word)
     return FRAGMENTS[key].format(w.word)
 
 def construct_correct_sentence():
