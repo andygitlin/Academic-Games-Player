@@ -661,8 +661,8 @@ FRAGMENTS["VERB_INFINITIVE_ADJECTIVEMODIFIER"] = "I am happy to {0}"
 FRAGMENTS["VERB_INFINITIVE_ADVERBMODIFIER"] = "I won enough to {0}"
 FRAGMENTS["VERB_INFINITIVE_OBJECTIVECOMPLEMENT"] = "I lacked it to {0}"
 
-FRAGMENTS["VERB_PARTICIPLE_LINKING"] = "They, {0}, are good"
-FRAGMENTS["VERB_PARTICIPLE_TRANSITIVE"] = "They, {0}, are good"
+FRAGMENTS["VERB_PARTICIPLE_LINKING"] = "They, {0} good, are good"
+FRAGMENTS["VERB_PARTICIPLE_TRANSITIVE"] = "They, {0} it, are good"
 FRAGMENTS["VERB_PARTICIPLE_INTRANSITIVE"] = "They, {0}, are good"
 
 FRAGMENTS["VERB_GERUND_LINKING"] = "I like {0} good"
@@ -699,8 +699,8 @@ SIMPLE_FRAGMENTS["VERB_INFINITIVE_ADJECTIVEMODIFIER"] = "be happy to {0}"
 SIMPLE_FRAGMENTS["VERB_INFINITIVE_ADVERBMODIFIER"] = "win enough to {0}"
 SIMPLE_FRAGMENTS["VERB_INFINITIVE_OBJECTIVECOMPLEMENT"] = "lack it to {0}"
 
-SIMPLE_FRAGMENTS["VERB_PARTICIPLE_LINKING"] = "call them, {0}, good"
-SIMPLE_FRAGMENTS["VERB_PARTICIPLE_TRANSITIVE"] = "call them, {0}, good"
+SIMPLE_FRAGMENTS["VERB_PARTICIPLE_LINKING"] = "call them, {0} good, good"
+SIMPLE_FRAGMENTS["VERB_PARTICIPLE_TRANSITIVE"] = "call them, {0} it, good"
 SIMPLE_FRAGMENTS["VERB_PARTICIPLE_INTRANSITIVE"] = "call them, {0}, good"
 
 SIMPLE_FRAGMENTS["VERB_GERUND_LINKING"] = "like {0} good"
@@ -811,6 +811,8 @@ def get_fragment(P1, P2, P3, w):
             if (P1 == "SIMPLE" or P1 == "COMPOUND") and PHRASES != ():
                 return w.usei
             return w.use
+        elif P3 in ["GERUND","PARTICIPIAL","INFINITIVE"]:
+            return "helpme"
         else:
             key = P2 + verb_get_suffix(w)
     if P2 == "NOUN" or P2 == "PRONOUN":
