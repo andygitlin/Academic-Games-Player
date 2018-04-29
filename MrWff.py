@@ -50,6 +50,7 @@ class WFF_Info:
     def set_line(self, line):
         self.line = line
 
+nice_a_wffs = []
 WFF_Dict = {}
 current_line = 1
 
@@ -120,16 +121,35 @@ def apply_rules(wff1,wff2=None):
             new_values.append(WFF_Info([wff1],'Eo'))
             new_keys.append(WFF('C',wff1.right,wff1.left))
             new_values.append(WFF_Info([wff1],'Eo'))
+        # Ai
+        for i in range(len(nice_a_wffs)-1,-1,-1):
+            a_wff = nice_a_wffs[i]
+            if str(a_wff.left) == str(wff1) or str(a_wff.right) == str(wff1):
+                new_keys.append(a_wff)
+                new_values.append(WFF_Info([wff1],'Ai'))
+                nice_a_wffs.pop(i)
     L = [str(k) for k in WFF_Dict.keys()]
     for i in range(len(new_keys)):
         s = str(new_keys[i])
         global wff_length_bound
         if len(s) < wff_length_bound and str(new_keys[i]) not in L:
             WFF_Dict[new_keys[i]] = new_values[i]
+
+def add_nice_a_wffs(wff):
+    if wff.connector == 'A':
+        nice_a_wffs.append(wff)
+    if wff.connector:
+        add_nice_a_wffs(wff.left)
+        add_nice_a_wffs(wff.right)
+
+def update_nice_a_wffs():
+    for wff in WFF_Dict.keys():
+        add_nice_a_wffs(wff)
                             
 def look_for_proof(start_wffs,end_wff):
     start(start_wffs)
     end = read_in_wff(end_wff)
+    add_nice_a_wffs(end)
     L = WFF_Dict.keys()
     while str(end) not in [str(l) for l in L]:
         current_wffs = [k for k in WFF_Dict.keys()]
@@ -138,6 +158,7 @@ def look_for_proof(start_wffs,end_wff):
         for i in range(len(current_wffs)):
             for j in range(i,len(current_wffs)):
                 apply_rules(current_wffs[i],current_wffs[j])
+        update_nice_a_wffs()
         L = WFF_Dict.keys()
     print("    | {0} -> {1}".format(', '.join(start_wffs),str(end_wff)))
     print('-----------------------------------')
@@ -190,8 +211,12 @@ def test6():
     #look_for_proof(['Cqp','q'],'Kpp')
     look_for_proof(['Kqs','Krp'],'KKssr')
 
+def test7():
+    #look_for_proof(['Ksr'],'KrAsp')
+    look_for_proof(['EAsrp','s'],'KAsqKpp')
+
 ##### main
 
 if __name__ == '__main__':
-    test6()
+    test7()
 

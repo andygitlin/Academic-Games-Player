@@ -896,6 +896,7 @@ def win():
     return construct_correct_sentence()
 
 ################################################## website stuff
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'random string'
 app.debug = True
@@ -926,8 +927,6 @@ class StartForm(FlaskForm):
     redCubes = StringField("RED")
     yellowCubes = StringField("YELLOW")
     submit = SubmitField('Submit')
-
-
 
 @app.route('/', methods = ['GET', 'POST'])
 def home():
@@ -969,7 +968,6 @@ def home():
         # display solution
         return render_template('result.html', sentence = solution, sentenceLength = len(solution.split()), player1 = PLAYERONE, player2 = PLAYERTWO, player3 = PLAYERTHREE, colorWild = COLOR_WILD, numLetters = NUMBER_OF_LETTERS, doubleVowel = DOUBLE_VOWEL, doubleConsonant = DOUBLE_CONSONANT, mustCotain = MUST_CONTAIN, mustNotContain = MUST_NOT_CONTAIN, letterTransfer = LETTER_TRANSFER, functions = GENERALS, clauses = CLAUSES, phrases = PHRASES)
     return render_template('index.html', form = form)
-
 
 ################################################## main
 
