@@ -1,6 +1,6 @@
 import copy
 
-wff_length_bound = 20
+wff_length_bound = 10
 
 class WFF:
 
@@ -54,6 +54,9 @@ class WFF_Info:
     def set_line(self, line):
         self.line = line
 
+    def set_parent_lines(self, parent_lines):
+        self.parent_lines = parent_lines
+
 nice_a_wffs = []
 WFF_Dict = {}
 current_line = 1
@@ -66,6 +69,7 @@ def print_line(wff,repeat=False):
     parent_lines = ', '.join(parents_list)
     q = "{0:<2}) | {1:<12} {2:>10} {3}".format(wff_info.line, str(wff), wff_info.rule, parent_lines)
     print(q)
+    wff_info.set_parent_lines(parent_lines)
 
 def print_proof(wff):
     global current_line
@@ -79,8 +83,7 @@ def print_proof(wff):
             repeat = True
             p = parents_list[0]
             wff_info = WFF_Dict[p]
-            parent_lines = ', '.join([str(WFF_Dict[z].line) for z in wff_info.parents])
-            q = "{0:<2}) | {1:<12} {2:>10} {3}".format(current_line, str(p), wff_info.rule, parent_lines)
+            q = "{0:<2}) | {1:<12} {2:>10} {3}".format(current_line, str(p), wff_info.rule, wff_info.parent_lines)
             if wff_info.rule == 's':
                 q = "{0:<2}) | {1:<12} {2:>10} {3}".format(current_line, str(p), "Rp", wff_info.line)
             print(q)
@@ -230,10 +233,11 @@ def test_nick_wang():
     look_for_proof(['EKrps','Kpr'],'KAqpKrs')
 
 def test8():
-    look_for_proof(['Nr','NNs','NNKNrp'],'KNNKNrpKNrNNs')
+    #look_for_proof(['Nr','NNs','NNKNrp'],'KNNKNrpKNrNNs')
+    look_for_proof(['Nr'],'KKNrNrKNrNr')
 
 ##### main
 
 if __name__ == '__main__':
-    test8()
+    test7()
 
