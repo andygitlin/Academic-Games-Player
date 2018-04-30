@@ -246,6 +246,9 @@ def word_is_valid(w, P1, P2, P3):
         if P1 in ["SIMPLE","COMPOUND"] and PHRASES != ():
             if "INTERROGATIVE" in w.specials or "RELATIVE" in w.specials:
                 return False
+        if P3 == "APPOSITIVE":
+            if "INTERROGATIVE" in w.specials or "RELATIVE" in w.specials:
+                return False
     return True
 
 ################################################## sentence building blocks
@@ -461,9 +464,9 @@ SIMPLE_FRAGMENTS["NOUN_DIRECTOBJECT"] = "consider the {0}"
 SIMPLE_FRAGMENTS["NOUN_INDIRECTOBJECT"] = "give the {0} consideration"
 SIMPLE_FRAGMENTS["NOUN_PREDICATENOUN"] = "be the {0}"
 SIMPLE_FRAGMENTS["NOUN_OBJECTOFPREPOSITION"] = "think about the {0}"
-SIMPLE_FRAGMENTS["NOUN_APPOSITIVE"] = "be the reason, the {0}"
+SIMPLE_FRAGMENTS["NOUN_APPOSITIVE"] = "be the reason, the {0},"
 SIMPLE_FRAGMENTS["NOUN_NOUNUSEDASADJECTIVE"] = "consider the {0} considerer"
-SIMPLE_FRAGMENTS["NOUN_APPOSITIVE_OBJECTIVECASE"] = "consider the reason, the {0}"
+SIMPLE_FRAGMENTS["NOUN_APPOSITIVE_OBJECTIVECASE"] = "consider the reason, the {0},"
 
 ##### Pronoun Fragments
 
@@ -485,8 +488,8 @@ SIMPLE_FRAGMENTS["PRONOUN_DIRECTOBJECT"] = "consider {0}"
 SIMPLE_FRAGMENTS["PRONOUN_INDIRECTOBJECT"] = "give {0} consideration"
 SIMPLE_FRAGMENTS["PRONOUN_PREDICATENOUN"] = "be {0}"
 SIMPLE_FRAGMENTS["PRONOUN_OBJECTOFPREPOSITION"] = "think about {0}"
-SIMPLE_FRAGMENTS["PRONOUN_APPOSITIVE"] = "be the reason, {0}"
-SIMPLE_FRAGMENTS["PRONOUN_APPOSITIVE_OBJECTIVECASE"] = "I considered the reason, {0}"
+SIMPLE_FRAGMENTS["PRONOUN_APPOSITIVE"] = "be the reason, {0},"
+SIMPLE_FRAGMENTS["PRONOUN_APPOSITIVE_OBJECTIVECASE"] = "consider the reason, {0},"
 
 # interrogative
 
@@ -537,8 +540,8 @@ SIMPLE_FRAGMENTS["PERSONAL_PRONOUN_DIRECTOBJECT_OBJECTIVECASE"] = "consider {0}"
 SIMPLE_FRAGMENTS["PERSONAL_PRONOUN_INDIRECTOBJECT_OBJECTIVECASE"] = "give {0} consideration"
 SIMPLE_FRAGMENTS["PERSONAL_PRONOUN_PREDICATENOUN_NOMINATIVECASE"] = "be {0}"
 SIMPLE_FRAGMENTS["PERSONAL_PRONOUN_OBJECTOFPREPOSITION_OBJECTIVECASE"] = "think about {0}"
-SIMPLE_FRAGMENTS["PERSONAL_PRONOUN_APPOSITIVE_NOMINATIVECASE"] = "be the reason, {0}"
-SIMPLE_FRAGMENTS["PERSONAL_PRONOUN_APPOSITIVE_OBJECTIVECASE"] = "I considered the reason, {0}"
+SIMPLE_FRAGMENTS["PERSONAL_PRONOUN_APPOSITIVE_NOMINATIVECASE"] = "be the reason, {0},"
+SIMPLE_FRAGMENTS["PERSONAL_PRONOUN_APPOSITIVE_OBJECTIVECASE"] = "consider the reason, {0},"
 
 ##### Verb Fragments
 
@@ -656,9 +659,10 @@ FRAGMENTS["VERB_INFINITIVE_NOUNMODIFIER"] = "The man to {0} won"
 FRAGMENTS["VERB_INFINITIVE_VERBMODIFIER"] = "I played to {0}"
 FRAGMENTS["VERB_INFINITIVE_ADJECTIVEMODIFIER"] = "I am happy to {0}"
 FRAGMENTS["VERB_INFINITIVE_ADVERBMODIFIER"] = "I won enough to {0}"
+FRAGMENTS["VERB_INFINITIVE_OBJECTIVECOMPLEMENT"] = "I lacked it to {0}"
 
-FRAGMENTS["VERB_PARTICIPLE_LINKING"] = "They, {0}, are good"
-FRAGMENTS["VERB_PARTICIPLE_TRANSITIVE"] = "They, {0}, are good"
+FRAGMENTS["VERB_PARTICIPLE_LINKING"] = "They, {0} good, are good"
+FRAGMENTS["VERB_PARTICIPLE_TRANSITIVE"] = "They, {0} it, are good"
 FRAGMENTS["VERB_PARTICIPLE_INTRANSITIVE"] = "They, {0}, are good"
 
 FRAGMENTS["VERB_GERUND_LINKING"] = "I like {0} good"
@@ -693,9 +697,10 @@ SIMPLE_FRAGMENTS["VERB_INFINITIVE_NOUNMODIFIER"] = "see the man to {0}"
 SIMPLE_FRAGMENTS["VERB_INFINITIVE_VERBMODIFIER"] = "play to {0}"
 SIMPLE_FRAGMENTS["VERB_INFINITIVE_ADJECTIVEMODIFIER"] = "be happy to {0}"
 SIMPLE_FRAGMENTS["VERB_INFINITIVE_ADVERBMODIFIER"] = "win enough to {0}"
+SIMPLE_FRAGMENTS["VERB_INFINITIVE_OBJECTIVECOMPLEMENT"] = "lack it to {0}"
 
-SIMPLE_FRAGMENTS["VERB_PARTICIPLE_LINKING"] = "call them, {0}, good"
-SIMPLE_FRAGMENTS["VERB_PARTICIPLE_TRANSITIVE"] = "call them, {0}, good"
+SIMPLE_FRAGMENTS["VERB_PARTICIPLE_LINKING"] = "call them, {0} good, good"
+SIMPLE_FRAGMENTS["VERB_PARTICIPLE_TRANSITIVE"] = "call them, {0} it, good"
 SIMPLE_FRAGMENTS["VERB_PARTICIPLE_INTRANSITIVE"] = "call them, {0}, good"
 
 SIMPLE_FRAGMENTS["VERB_GERUND_LINKING"] = "like {0} good"
@@ -806,6 +811,8 @@ def get_fragment(P1, P2, P3, w):
             if (P1 == "SIMPLE" or P1 == "COMPOUND") and PHRASES != ():
                 return w.usei
             return w.use
+        elif P3 in ["GERUND","PARTICIPIAL","INFINITIVE"]:
+            return "helpme"
         else:
             key = P2 + verb_get_suffix(w)
     if P2 == "NOUN" or P2 == "PRONOUN":
@@ -856,8 +863,13 @@ def get_fragment(P1, P2, P3, w):
                 key = key + "_MUCH"
             elif "POST" in w.specials:
                 key = key + "_POST"
-    if (P1 == "SIMPLE" or P1 == "COMPOUND") and PHRASES != ():
-        return SIMPLE_FRAGMENTS[key].format(w.word)
+    if P1 == "SIMPLE" or P1 == "COMPOUND":
+        if CLAUSES != ():
+            return SIMPLE_FRAGMENTS["badkey"]
+        if PHRASES != ():
+            if P3 == "SUBJECT":
+                return SIMPLE_FRAGMENTS["badkey"]
+            return SIMPLE_FRAGMENTS[key].format(w.word)
     return FRAGMENTS[key].format(w.word)
 
 def construct_correct_sentence():
@@ -876,6 +888,7 @@ def construct_correct_sentence():
     B = get_fragment(P1,P2,P3,www)
     C = get_basic_sentence_fragment(P1,P2,P3)
     X = A.format(C.format(B))
+    X = X.replace(",.",".")
     X = X.replace("?,","?")
     X = X.replace("?.","?")
     Xfind = X.find("? and")
@@ -887,6 +900,7 @@ def win():
     return construct_correct_sentence()
 
 ################################################## website stuff
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'random string'
 app.debug = True
@@ -917,8 +931,6 @@ class StartForm(FlaskForm):
     redCubes = StringField("RED")
     yellowCubes = StringField("YELLOW")
     submit = SubmitField('Submit')
-
-
 
 @app.route('/', methods = ['GET', 'POST'])
 def home():
@@ -960,7 +972,6 @@ def home():
         # display solution
         return render_template('result.html', sentence = solution, sentenceLength = len(solution.split()), player1 = PLAYERONE, player2 = PLAYERTWO, player3 = PLAYERTHREE, colorWild = COLOR_WILD, numLetters = NUMBER_OF_LETTERS, doubleVowel = DOUBLE_VOWEL, doubleConsonant = DOUBLE_CONSONANT, mustCotain = MUST_CONTAIN, mustNotContain = MUST_NOT_CONTAIN, letterTransfer = LETTER_TRANSFER, functions = GENERALS, clauses = CLAUSES, phrases = PHRASES)
     return render_template('index.html', form = form)
-
 
 ################################################## main
 
