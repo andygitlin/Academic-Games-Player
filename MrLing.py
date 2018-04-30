@@ -810,6 +810,18 @@ def get_fragment(P1, P2, P3, w):
             if (P1 == "SIMPLE" or P1 == "COMPOUND") and PHRASES != ():
                 return w.usei
             return w.use
+        elif "INFINITIVE" in w.specials:
+            key = P2 + verb_get_suffix(w)
+            key2 = None
+            for i in range(len(GENERALS)):
+                g = GENERALS[i]
+                if g[0] == ":":
+                    GENERALS.pop(i)
+                    key2 = P2 + verb_get_suffix(w)
+                    GENERALS.append(g)
+                    break
+            if key2:
+                wword = SIMPLE_FRAGMENTS[key2].format(w.word)
         else:
             key = P2 + verb_get_suffix(w)
     if P2 == "NOUN" or P2 == "PRONOUN":
