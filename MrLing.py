@@ -226,8 +226,10 @@ def word_is_valid(w, P1, P2, P3):
             if P2 == "VERB" and g[0] == ":":
                 if "INTRANSITIVE" not in w.specials:
                     return False
+                """
                 if w.cat != "SIMPLE" and w.cat != "GERUND":
                     return False
+                """
             elif P2 == "VERB" and P3 != "AUXILIARY":
                 if g not in verb_category_to_demands(w.cat):
                     return False
