@@ -226,10 +226,6 @@ def word_is_valid(w, P1, P2, P3):
             if P2 == "VERB" and g[0] == ":":
                 if "INTRANSITIVE" not in w.specials:
                     return False
-                """
-                if w.cat != "SIMPLE" and w.cat != "GERUND":
-                    return False
-                """
             elif P2 == "VERB" and P3 != "AUXILIARY":
                 if g not in verb_category_to_demands(w.cat):
                     return False
@@ -814,18 +810,6 @@ def get_fragment(P1, P2, P3, w):
             if (P1 == "SIMPLE" or P1 == "COMPOUND") and PHRASES != ():
                 return w.usei
             return w.use
-        elif "GERUND" in w.specials or "INFINITIVE" in w.specials:
-            key = P2 + verb_get_suffix(w)
-            key2 = None
-            for i in range(len(GENERALS)):
-                g = GENERALS[i]
-                if g[0] == ":":
-                    GENERALS.pop(i)
-                    key2 = P2 + verb_get_suffix(w)
-                    GENERALS.append(g)
-                    break
-            if key2:
-                wword = SIMPLE_FRAGMENTS[key2].format(w.word)
         else:
             key = P2 + verb_get_suffix(w)
     if P2 == "NOUN" or P2 == "PRONOUN":
