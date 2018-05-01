@@ -2,6 +2,13 @@ import copy
 
 wff_length_bound = 10
 
+def wff_length(wff_str):
+    counter = 0
+    for i in range(len(wff_str)):
+        if wff_str[i] != 'N':
+            counter += 1
+    return counter
+
 class WFF:
 
     def __init__(self, connector, left, right):
@@ -143,7 +150,7 @@ def apply_rules(wff1,wff2=None):
     global wff_length_bound
     for i in range(len(new_keys)):
         s = str(new_keys[i])
-        if len(s) < wff_length_bound and s not in L:
+        if wff_length(s) < wff_length_bound and s not in L:
             WFF_Dict[new_keys[i]] = new_values[i]
             add_nice_a_wffs(new_keys[i].left)
             add_nice_a_wffs(new_keys[i].right)
