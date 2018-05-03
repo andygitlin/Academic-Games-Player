@@ -1,4 +1,5 @@
 import copy
+import time
 
 wff_length_bound = 10
 
@@ -16,6 +17,7 @@ class WFF:
         self.left = left
         self.right = right
         self.str = None
+        self.len  = None
 
     def __str__(self):
         if not self.connector:
@@ -24,16 +26,25 @@ class WFF:
             self.str = self.connector + str(self.left) + str(self.right)
         return self.str
 
+    def __len__(self):
+        if not self.connector:
+            raise ValueError
+        if not self.len:
+            self.len = 1 + len(self.left) + len(self.right)
+        return self.len
+
 class Base_WFF(WFF):
 
     def __init__(self, left):
         self.connector = ''
         self.left = left
         self.right = ''
-        self.str = self.left
 
     def __str__(self):
         return self.connector + self.left
+
+    def __len__(self):
+        return 1
 
 def read_in_wff(wff_str):
     if len(wff_str) == 0:
@@ -57,6 +68,7 @@ class WFF_Info:
         self.parents = parents
         self.rule = rule
         self.line = None
+        self.parent_lines = None
 
     def set_line(self, line):
         self.line = line
@@ -68,36 +80,37 @@ nice_a_wffs = []
 WFF_Dict = {}
 current_line = 1
 
-def print_line(wff,repeat=False):
+def print_line(wff):
+    global current_line
     wff_info = WFF_Dict[wff]
     parents_list = [str(WFF_Dict[p].line) for p in wff_info.parents]
-    if repeat:
-        parents_list = [parents_list[0],str(current_line-1)]
-    parent_lines = ', '.join(parents_list)
-    q = "{0:<2}) | {1:<12} {2:>10} {3}".format(wff_info.line, str(wff), wff_info.rule, parent_lines)
+    rule = wff_info.rule
+    if not wff_info.line:
+        wff_info.line = current_line
+    elif rule == 's':
+        rule = "Rp"
+        parents_list = [str(wff_info.line)]
+    if len(parents_list) == 2 and parents_list[0] == parents_list[1]:
+        parents_list[1] = str(current_line-1)
+    if not wff_info.parent_lines:
+        parent_lines = ', '.join(parents_list)
+        wff_info.set_parent_lines(parent_lines)
+    q = "{0:<2}) | {1:<12} {2:>10} {3}".format(current_line, str(wff), rule, wff_info.parent_lines)
     print(q)
-    wff_info.set_parent_lines(parent_lines)
+    current_line += 1
 
 def print_proof(wff):
     global current_line
     parents_list = WFF_Dict[wff].parents
-    repeat = False
-    for p in parents_list:
-        if not WFF_Dict[p].line:
-            print_proof(p)
-    if len(parents_list) == 2:
-        if parents_list[0] == parents_list[1]:
-            repeat = True
-            p = parents_list[0]
-            wff_info = WFF_Dict[p]
-            q = "{0:<2}) | {1:<12} {2:>10} {3}".format(current_line, str(p), wff_info.rule, wff_info.parent_lines)
-            if wff_info.rule == 's':
-                q = "{0:<2}) | {1:<12} {2:>10} {3}".format(current_line, str(p), "Rp", wff_info.line)
-            print(q)
-            current_line += 1
-    WFF_Dict[wff].set_line(current_line)
-    print_line(wff,repeat)
-    current_line += 1
+    if len(parents_list) == 2 and parents_list[0] == parents_list[1]:
+        if WFF_Dict[parents_list[0]].line is None:
+            print_proof(parents_list[0])
+        print_line(parents_list[0])
+    else:
+        for i in range(len(parents_list)):
+            if WFF_Dict[parents_list[i]].line is None:
+                print_proof(parents_list[i])
+    print_line(wff)
 
 def start(start_wffs):
     for wff in start_wffs:
@@ -149,29 +162,32 @@ def apply_rules(wff1,wff2=None):
     L = [str(k) for k in WFF_Dict.keys()]
     global wff_length_bound
     for i in range(len(new_keys)):
-        s = str(new_keys[i])
-        if wff_length(s) < wff_length_bound and s not in L:
+        if len(new_keys[i]) < wff_length_bound and str(new_keys[i]) not in L:
             WFF_Dict[new_keys[i]] = new_values[i]
-            add_nice_a_wffs(new_keys[i].left)
-            add_nice_a_wffs(new_keys[i].right)
+            if new_keys[i].connector != 'A':
+                add_nice_a_wffs(new_keys[i])
 
-def add_nice_a_wffs(wff):
-    if not isinstance(wff,WFF):
-        return
-    if wff.connector == 'A':
-        nice_a_wffs.append(wff)
-    if wff.connector:
-        add_nice_a_wffs(wff.left)
-        add_nice_a_wffs(wff.right)
-
-def update_nice_a_wffs():
-    for wff in WFF_Dict.keys():
-        add_nice_a_wffs(wff)
+def add_nice_a_wffs(wff,end=False):
+    if isinstance(wff,WFF):
+        if end:
+            if wff.connector == 'A':
+                nice_a_wffs.append(wff)
+                add_nice_a_wffs(wff.left,True)
+                add_nice_a_wffs(wff.right,True)
+            elif wff.connector == 'K':
+                add_nice_a_wffs(wff.left,True)
+                add_nice_a_wffs(wff.right,True)
+        if not end:
+            if wff.connector == 'C':
+                add_nice_a_wffs(wff.left,True)
+            elif wff.connector == 'E':
+                add_nice_a_wffs(wff.left,True)
+                add_nice_a_wffs(wff.right,True)
                             
 def look_for_proof(start_wffs,end_wff):
     start(start_wffs)
     end = read_in_wff(end_wff)
-    add_nice_a_wffs(end)
+    add_nice_a_wffs(end,True)
     L = WFF_Dict.keys()
     while str(end) not in [str(l) for l in L]:
         current_wffs = [k for k in WFF_Dict.keys()]
@@ -195,6 +211,12 @@ def look_for_proof(start_wffs,end_wff):
     print_proof(wff)
 
 ##### test cases
+
+def reset_all():
+    global nice_a_wffs, WFF_Dict, current_line
+    nice_a_wffs = []
+    WFF_Dict = {}
+    current_line = 1
 
 def test1():
     wff = WFF('C',Base_WFF('r'),Base_WFF('p'))
@@ -243,8 +265,20 @@ def test8():
     #look_for_proof(['Nr','NNs','NNKNrp'],'KNNKNrpKNrNNs')
     look_for_proof(['Nr'],'KKNrNrKNrNr')
 
+def test9():
+    look_for_proof(['p'],'p')
+    #look_for_proof(['Cpp'],'Epp')
+
+def test10():
+    look_for_proof(['p','q'],'KKppKqq')
+
 ##### main
 
 if __name__ == '__main__':
-    test7()
+    for test in [test9,test4,test6,test7,test8,test5,test_nick_wang]:
+        start_time = time.time()
+        test()
+        reset_all()
+        end_time = time.time()
+        print(end_time-start_time)
 
