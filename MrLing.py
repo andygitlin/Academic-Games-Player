@@ -226,8 +226,6 @@ def word_is_valid(w, P1, P2, P3):
             if P2 == "VERB" and g[0] == ":":
                 if "INTRANSITIVE" not in w.specials:
                     return False
-                if w.cat != "SIMPLE" and w.cat != "GERUND":
-                    return False
             elif P2 == "VERB" and P3 != "AUXILIARY":
                 if g not in verb_category_to_demands(w.cat):
                     return False
@@ -805,14 +803,25 @@ def get_sentence(P1):
 
 def get_fragment(P1, P2, P3, w):
     # input: player one demand P1, player two demand P2, player three demand P3, Word w
+    wword = w.word
     key = P2 + "_" + P3
     if P2 == "VERB":
         if P3 == "AUXILIARY":
             if (P1 == "SIMPLE" or P1 == "COMPOUND") and PHRASES != ():
                 return w.usei
             return w.use
-        elif P3 in ["GERUND","PARTICIPIAL","INFINITIVE"]:
-            return "helpme"
+        elif "INFINITIVE" in w.specials:
+            key = P2 + verb_get_suffix(w)
+            key2 = None
+            for i in range(len(GENERALS)):
+                g = GENERALS[i]
+                if g[0] == ":":
+                    GENERALS.pop(i)
+                    key2 = P2 + verb_get_suffix(w)
+                    GENERALS.append(g)
+                    break
+            if key2:
+                wword = SIMPLE_FRAGMENTS[key2].format(w.word)
         else:
             key = P2 + verb_get_suffix(w)
     if P2 == "NOUN" or P2 == "PRONOUN":
@@ -869,8 +878,8 @@ def get_fragment(P1, P2, P3, w):
         if PHRASES != ():
             if P3 == "SUBJECT":
                 return SIMPLE_FRAGMENTS["badkey"]
-            return SIMPLE_FRAGMENTS[key].format(w.word)
-    return FRAGMENTS[key].format(w.word)
+            return SIMPLE_FRAGMENTS[key].format(wword)
+    return FRAGMENTS[key].format(wword)
 
 def construct_correct_sentence():
     P1 = PLAYERONE if PLAYERONE else "SV"
