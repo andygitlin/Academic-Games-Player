@@ -1,7 +1,8 @@
 import copy
 import time
+import itertools
 
-wff_length_bound = 10
+##### basic functions
 
 def wff_length(wff_str):
     counter = 0
@@ -33,6 +34,25 @@ class WFF:
             self.len = 1 + len(self.left) + len(self.right)
         return self.len
 
+    def truth(self, true_wffs):
+        if not self.connector:
+            raise ValueError
+        connector = self.connector[-1]
+        no_N_truth = None
+        left_truth = self.left.truth(true_wffs)
+        right_truth = self.right.truth(true_wffs)
+        if connector == 'C':
+            no_N_truth = (not left_truth or right_truth)
+        elif connector == 'A':
+            no_N_truth = (left_truth or right_truth)
+        elif connector == 'K':
+            no_N_truth = (left_truth and right_truth)
+        elif connector == 'E':
+            no_N_truth = (left_truth == right_truth)
+        if no_N_truth == None:
+            raise ValueError
+        return (no_N_truth if self.connector[0] != 'N' else not no_N_truth)
+
 class Base_WFF(WFF):
 
     def __init__(self, left):
@@ -45,6 +65,10 @@ class Base_WFF(WFF):
 
     def __len__(self):
         return 1
+
+    def truth(self, true_wffs):
+        no_N_truth = (self.left in true_wffs)
+        return (no_N_truth if self.connector != 'N' else not no_N_truth)
 
 def read_in_wff(wff_str):
     if len(wff_str) == 0:
@@ -76,9 +100,13 @@ class WFF_Info:
     def set_parent_lines(self, parent_lines):
         self.parent_lines = parent_lines
 
+##### searching for proof (in Basic WFF)
+
+wff_length_bound = 10
 nice_a_wffs = []
 WFF_Dict = {}
 current_line = 1
+rules_used = []
 
 def print_line(wff):
     global current_line
@@ -98,6 +126,8 @@ def print_line(wff):
     q = "{0:<2}) | {1:<12} {2:>10} {3}".format(current_line, str(wff), rule, wff_info.parent_lines)
     print(q)
     current_line += 1
+    if rule != 's' and rule not in rules_used:
+        rules_used.append(rule)
 
 def print_proof(wff):
     global current_line
@@ -209,14 +239,33 @@ def look_for_proof(start_wffs,end_wff):
             wff = k
             break
     print_proof(wff)
+    print(', '.join(start_wffs) + ' / ' + ', '.join(rules_used))
+
+##### determining whether or not proof is possible (in Regular WFF)
+
+def proof_possible(start_wffs,end_wff):
+    wff_str = str(end_wff)
+    if len(start_wffs) != 0:
+        wff_str = str(start_wffs[0]) + wff_str
+        for i in range(1,len(start_wffs)):
+            wff_str = 'K' + str(start_wffs[i]) + wff_str
+        wff_str = 'C' + wff_str
+    wff = read_in_wff(wff_str)
+    base_wffs = list(set([c for c in str(wff_str) if c.islower()]))
+    for n in range(len(base_wffs)+1):
+        for true_wffs in itertools.combinations(base_wffs,n):
+            if not wff.truth(true_wffs):
+                return False
+    return True
 
 ##### test cases
 
 def reset_all():
-    global nice_a_wffs, WFF_Dict, current_line
+    global nice_a_wffs, WFF_Dict, current_line, rules_used
     nice_a_wffs = []
     WFF_Dict = {}
     current_line = 1
+    rules_used = []
 
 def test1():
     wff = WFF('C',Base_WFF('r'),Base_WFF('p'))
@@ -275,10 +324,15 @@ def test10():
 ##### main
 
 if __name__ == '__main__':
+    print(proof_possible(['EKrps','Kpr'],'s'))
+    print(proof_possible(['EAsrp','s'],'KAsqKpp'))
+    print(proof_possible(['Np','Kqs'],'KqNr'))
+    """
     for test in [test9,test4,test6,test7,test8,test5,test_nick_wang]:
         start_time = time.time()
         test()
         reset_all()
         end_time = time.time()
         print(end_time-start_time)
+    """
 
