@@ -82,6 +82,7 @@ nice_a_wffs = []
 WFF_Dict = {}
 current_line = 1
 rules_used = []
+nice_k_wffs = []
 
 def print_line(wff):
     global current_line
@@ -118,17 +119,31 @@ def print_proof(wff):
 
 def start(start_wffs):
     for wff in start_wffs:
-        WFF_Dict[read_in_wff(wff)] = WFF_Info([],'s')
+        w = read_in_wff(wff)
+        WFF_Dict[w] = WFF_Info([],'s')
+        add_nice_k_wffs(w)
 
 def apply_rules(wff1,wff2=None):
     new_keys = []
     new_values = []
     if wff2:
         # Ki
-        new_keys.append(WFF('K',wff1,wff2))
-        new_values.append(WFF_Info([wff1,wff2],'Ki'))
-        new_keys.append(WFF('K',wff2,wff1))
-        new_values.append(WFF_Info([wff2,wff1],'Ki'))
+        w12 = WFF('K',wff1,wff2)
+        w21 = WFF('K',wff2,wff1)
+        for i in range(len(nice_k_wffs)-1,-1,-1):
+            k_wff = nice_k_wffs[i]
+            if str(k_wff) == str(w12):
+                new_keys.append(k_wff)
+                new_values.append(WFF_Info([wff1,wff2],'Ki'))
+                nice_k_wffs.pop(i)
+            elif str(k_wff) == str(w21):
+                new_keys.append(k_wff)
+                new_values.append(WFF_Info([wff2,wff1],'Ki'))
+                nice_k_wffs.pop(i)
+        #new_keys.append(WFF('K',wff1,wff2))
+        #new_values.append(WFF_Info([wff1,wff2],'Ki'))
+        #new_keys.append(WFF('K',wff2,wff1))
+        #new_values.append(WFF_Info([wff2,wff1],'Ki'))
         # Co
         if wff1.connector == 'C' and str(wff1.left) == str(wff2):
             new_keys.append(wff1.right)
@@ -187,11 +202,30 @@ def add_nice_a_wffs(wff,end=False):
             elif wff.connector == 'E':
                 add_nice_a_wffs(wff.left,True)
                 add_nice_a_wffs(wff.right,True)
+
+def add_nice_k_wffs(wff,end=False):
+    if isinstance(wff,WFF):
+        if end:
+            if wff.connector == 'K':
+                nice_k_wffs.append(wff)
+                add_nice_k_wffs(wff.left,True)
+                add_nice_k_wffs(wff.right,True)
+            elif wff.connector == 'A':
+                add_nice_k_wffs(wff.left,True)
+                add_nice_k_wffs(wff.right,True)
+        if not end:
+            if wff.connector == 'C':
+                add_nice_k_wffs(wff.left,True)
+            elif wff.connector == 'E':
+                add_nice_k_wffs(wff.left,True)
+                add_nice_k_wffs(wff.right,True)
+
                             
 def look_for_proof(start_wffs,end_wff):
     start(start_wffs)
     end = read_in_wff(end_wff)
     add_nice_a_wffs(end,True)
+    add_nice_k_wffs(end,True)
     L = WFF_Dict.keys()
     while str(end) not in [str(l) for l in L]:
         current_wffs = [k for k in WFF_Dict.keys()]
@@ -281,15 +315,10 @@ def test10():
 ##### main
 
 if __name__ == '__main__':
-    test9()
-    test_nick_wang()
-    test5()
-    """
     for test in [test9,test4,test6,test7,test8,test5,test_nick_wang]:
         start_time = time.time()
         test()
         reset_all()
         end_time = time.time()
         print(end_time-start_time)
-    """
 
