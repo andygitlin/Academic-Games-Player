@@ -313,6 +313,17 @@ def TEST3():
     print_proof([],'ApNp')
     RESET_ALL()
 
+def TEST4():
+    print_proof(['EKrps','Kpr'],'s')
+    RESET_ALL()
+    print_proof(['EAsrp','s'],'KAsqKpp')
+    RESET_ALL()
+    print_proof(['Np','Kqs'],'KqNr')
+    RESET_ALL()
+    print_proof(['Np'],'NNNp')
+    RESET_ALL()
+
 if __name__ == '__main__':
     TEST2()
     TEST3()
+    TEST4()

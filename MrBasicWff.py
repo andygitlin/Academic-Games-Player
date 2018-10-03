@@ -219,7 +219,6 @@ def add_nice_k_wffs(wff,end=False):
             elif wff.connector == 'E':
                 add_nice_k_wffs(wff.left,True)
                 add_nice_k_wffs(wff.right,True)
-
                             
 def look_for_proof(start_wffs,end_wff):
     start(start_wffs)
@@ -252,11 +251,12 @@ def look_for_proof(start_wffs,end_wff):
 ##### test cases
 
 def reset_all():
-    global nice_a_wffs, WFF_Dict, current_line, rules_used
+    global nice_a_wffs, WFF_Dict, current_line, rules_used, nice_k_wffs
     nice_a_wffs = []
     WFF_Dict = {}
     current_line = 1
     rules_used = []
+    nice_k_wffs = []
 
 def test1():
     wff = WFF('C',Base_WFF('r'),Base_WFF('p'))
@@ -312,10 +312,13 @@ def test9():
 def test10():
     look_for_proof(['p','q'],'KKppKqq')
 
+def test11():
+    look_for_proof(['NKsr','Np'],'KNpNKsr')
+
 ##### main
 
 if __name__ == '__main__':
-    for test in [test9,test4,test6,test7,test8,test5,test_nick_wang]:
+    for test in [test10,test9,test4,test6,test7,test8,test5,test_nick_wang,test11]:
         start_time = time.time()
         test()
         reset_all()
