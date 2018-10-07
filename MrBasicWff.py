@@ -1,6 +1,7 @@
 import copy
 import time
 import itertools
+import numpy as np
 
 ##### basic functions
 
@@ -77,7 +78,7 @@ class WFF_Info:
 
 ##### searching for proof (in Basic WFF)
 
-wff_length_bound = 10
+wff_length_bound = np.inf
 nice_a_wffs = []
 WFF_Dict = {}
 current_line = 1
@@ -99,7 +100,7 @@ def print_line(wff):
     if not wff_info.parent_lines:
         parent_lines = ', '.join(parents_list)
         wff_info.set_parent_lines(parent_lines)
-    print("{0:<2}) | {1:<12} {2:>10} {3}".format(current_line, str(wff), rule, wff_info.parent_lines))
+    print("{0:<2}) | {1:<12} {2:>15} {3}".format(current_line, str(wff), rule, wff_info.parent_lines))
     current_line += 1
     if rule != 's' and rule not in rules_used:
         rules_used.append(rule)
@@ -140,10 +141,6 @@ def apply_rules(wff1,wff2=None):
                 new_keys.append(k_wff)
                 new_values.append(WFF_Info([wff2,wff1],'Ki'))
                 nice_k_wffs.pop(i)
-        #new_keys.append(WFF('K',wff1,wff2))
-        #new_values.append(WFF_Info([wff1,wff2],'Ki'))
-        #new_keys.append(WFF('K',wff2,wff1))
-        #new_values.append(WFF_Info([wff2,wff1],'Ki'))
         # Co
         if wff1.connector == 'C' and str(wff1.left) == str(wff2):
             new_keys.append(wff1.right)
@@ -315,10 +312,13 @@ def test10():
 def test11():
     look_for_proof(['NKsr','Np'],'KNpNKsr')
 
+def test12():
+    look_for_proof(['EKsrKCpqs','Eqp','Ksp'],'AAAKrsNpNqNr')
+
 ##### main
 
 if __name__ == '__main__':
-    for test in [test10,test9,test4,test6,test7,test8,test5,test_nick_wang,test11]:
+    for test in [test10,test9,test4,test6,test7,test8,test5,test_nick_wang,test11,test12]:
         start_time = time.time()
         test()
         reset_all()
