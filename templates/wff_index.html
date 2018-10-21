@@ -14,7 +14,7 @@
       {% for message in get_flashed_messages() %}
         {{ message }}
       {% endfor %}
-      <p class="game">{{ form.gametype.label }} {{ form.gametype() }}</p>
+      <p class="gametype">{{ form.gametype.label }} {{ form.gametype() }}</p>
       <p class="premises">{{ form.premises.label }} {{ form.premises() }}</p>
       <p class="conclusion">{{ form.conclusion.label }} {{ form.conclusion() }}</p>
       {{ form.submit() }}
