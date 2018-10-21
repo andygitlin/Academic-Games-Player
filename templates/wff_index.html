@@ -8,7 +8,7 @@
 </head>
 <body>
 {% block content %}
-  <form method="POST" action="/wff">
+  <form method="POST">
       {{ form.hidden_tag() }}
 
       {% for message in get_flashed_messages() %}
