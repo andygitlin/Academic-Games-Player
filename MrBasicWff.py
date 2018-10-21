@@ -13,6 +13,7 @@ def printer(str):
     if print_option:
         print(str)
     else:
+        global output_string
         output_string = output_string + str + '\n'
 
 ##### basic functions
@@ -260,6 +261,7 @@ def look_for_proof(start_wffs,end_wff):
 def BASIC_get_proof_string(start_wffs,end_wff):
     global print_option, output_string
     print_option = False
+    output_string = ""
     look_for_proof(start_wffs,end_wff)
     return output_string
 

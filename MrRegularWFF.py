@@ -13,6 +13,7 @@ def printer(str):
     if print_option:
         print(str)
     else:
+        global output_string
         output_string = output_string + str + '\n'
 
 ##### determining whether or not proof is possible (in Regular WFF)
@@ -296,6 +297,7 @@ def print_proof(start_wffs,end_wff):
 def REGULAR_get_proof_string(start_wffs,end_wff):
     global print_option, output_string
     print_option = False
+    output_string = ""
     print_proof(start_wffs,end_wff)
     return output_string
 
