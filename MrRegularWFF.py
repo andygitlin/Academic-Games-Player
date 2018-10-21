@@ -299,7 +299,7 @@ def REGULAR_get_proof_string(start_wffs,end_wff):
     print_proof(start_wffs,end_wff)
     return output_string
 
-##### main
+##### tests
 
 def RESET_ALL():
     global current_line, indentation, ApNp_lines, pNp_lines
@@ -340,8 +340,9 @@ def TEST4():
     print_proof(['Np'],'NNNp')
     RESET_ALL()
 
+##### main
+
 if __name__ == '__main__':
     TEST2()
     TEST3()
     TEST4()
-

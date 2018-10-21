@@ -336,7 +336,6 @@ def test12():
 ##### main
 
 if __name__ == '__main__':
-    global print_option
     print_option = True
     for test in [test10,test9,test4,test6,test7,test8,test5,test_nick_wang,test11,test12]:
         start_time = time.time()
