@@ -25,6 +25,8 @@ class CheckboxField(SelectMultipleField):
     widget = widgets.ListWidget(prefix_label = False)
     option_widget = widgets.CheckboxInput()
 
+"""
+
 class StartForm(FlaskForm):
     game = RadioField("Select Game", choices = [("WFF","WFF 'N Proof"),("Ling","Linguishtik")])
     submit = SubmitField('Submit')
@@ -109,6 +111,25 @@ def ling():
     return render_template('ling_index.html', form = form)
 
 @app.route('/wff', methods = ['GET', 'POST'])
+def wff():
+    form = WffForm()
+    if request.method == 'POST':
+        get_proof_string = (BASIC_get_proof_string if form.gametype.data == "Basic" else REGULAR_get_proof_string)
+        prems = [str(w) for w in form.premises.data]
+        concl = str(form.conclusion.data)
+        solution = get_proof_string(prems,concl)
+        return render_template('wff_result.html', sentence = solution, gametype = form.gametype.data, premises = prems, conclusion = concl)
+    return render_template('wff_index.html', form = form)
+    
+"""
+
+class WffForm(FlaskForm):
+    gametype = RadioField("Basic or Regular:", choices = [("Basic","Basic"),("Regular","Regular")])
+    premises = StringField("Premises (separate with comma):")
+    conclusion = StringField("Conclusion:")
+    submit = SubmitField('Submit')
+
+@app.route('/', methods = ['GET', 'POST'])
 def wff():
     form = WffForm()
     if request.method == 'POST':
