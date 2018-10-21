@@ -68,7 +68,7 @@ def home():
     return render_template('index.html', form = form)
 
 @app.route('/ling', methods = ['GET', 'POST'])
-def ling_home():
+def ling():
     global PLAYERONE, PLAYERTWO, PLAYERTHREE, COLOR_WILD, NUMBER_OF_LETTERS, DOUBLE_VOWEL, DOUBLE_CONSONANT, MUST_CONTAIN, MUST_NOT_CONTAIN, LETTER_TRANSFER, GENERALS, CLAUSES, PHRASES, USE_CUBES, CUBES
     form = LingForm()
     if request.method == 'POST':
@@ -109,7 +109,7 @@ def ling_home():
     return render_template('ling_index.html', form = form)
 
 @app.route('/wff', methods = ['GET', 'POST'])
-def wff_home():
+def wff():
     form = WffForm()
     if request.method == 'POST':
         get_proof_string = (BASIC_get_proof_string if form.gametype.data == "Basic" else REGULAR_get_proof_string)
