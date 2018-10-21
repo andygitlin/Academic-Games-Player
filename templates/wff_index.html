@@ -15,7 +15,9 @@
 <body>
 <p class="p1"><span class="s1">{% block content %}</span></p>
 <p class="p1"><span class="s1">{{ form.hidden_tag() }} {% for message in get_flashed_messages() %} {{ message }} {% endfor %}</span></p>
-<p class="p2"><span class="s1">{{ form.game.label }} {{ form.game() }}</span></p>
+<p class="p2"><span class="s1">{{ form.gametype.label }} {{ form.gametype() }}</span></p>
+<p class="p2"><span class="s1">{{ form.premises.label }} {{ form.premises() }}</span></p>
+<p class="p2"><span class="s1">{{ form.conclusion.label }} {{ form.conclusion() }}</span></p>
 <p class="p1"><span class="s1">{{ form.submit() }}<span class="Apple-converted-space"> </span></span></p>
 <p class="p1"><span class="s1">{% endblock %}<span class="Apple-converted-space"> </span></span></p>
 </body>

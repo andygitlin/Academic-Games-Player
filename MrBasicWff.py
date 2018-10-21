@@ -3,6 +3,18 @@ import time
 import itertools
 import numpy as np
 
+##### printing
+
+print_option = True
+output_string = ""
+
+def printer(str):
+    global print_option
+    if print_option:
+        print(str)
+    else:
+        output_string = output_string + str + '\n'
+
 ##### basic functions
 
 def wff_length(wff_str):
@@ -100,7 +112,7 @@ def print_line(wff):
     if not wff_info.parent_lines:
         parent_lines = ', '.join(parents_list)
         wff_info.set_parent_lines(parent_lines)
-    print("{0:<2}) | {1:<12} {2:>15} {3}".format(current_line, str(wff), rule, wff_info.parent_lines))
+    printer("{0:<2}) | {1:<12} {2:>15} {3}".format(current_line, str(wff), rule, wff_info.parent_lines))
     current_line += 1
     if rule != 's' and rule not in rules_used:
         rules_used.append(rule)
@@ -231,19 +243,25 @@ def look_for_proof(start_wffs,end_wff):
             for j in range(i,len(current_wffs)):
                 apply_rules(current_wffs[i],current_wffs[j])
         L = WFF_Dict.keys()
-    print("    | {0} -> {1}".format(', '.join(start_wffs),str(end_wff)))
-    print('-----------------------------------')
+    printer("    | {0} -> {1}".format(', '.join(start_wffs),str(end_wff)))
+    printer('-----------------------------------')
     for k in WFF_Dict.keys():
         if WFF_Dict[k].rule == 's':
             print_proof(k)
-    print('----------')
+    printer('----------')
     wff = None
     for k in WFF_Dict.keys():
         if str(k) == str(end_wff):
             wff = k
             break
     print_proof(wff)
-    print(', '.join(start_wffs) + ' / ' + ', '.join(rules_used))
+    printer(', '.join(start_wffs) + ' / ' + ', '.join(rules_used))
+
+def BASIC_get_proof_string(start_wffs,end_wff):
+    global print_option, output_string
+    print_option = False
+    look_for_proof(start_wffs,end_wff)
+    return output_string
 
 ##### test cases
 
@@ -318,6 +336,8 @@ def test12():
 ##### main
 
 if __name__ == '__main__':
+    global print_option
+    print_option = True
     for test in [test10,test9,test4,test6,test7,test8,test5,test_nick_wang,test11,test12]:
         start_time = time.time()
         test()

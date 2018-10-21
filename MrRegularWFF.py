@@ -3,6 +3,18 @@ import time
 import itertools
 from MrBasicWff import *
 
+##### printing
+
+print_option = True
+output_string = ""
+
+def printer(str):
+    global print_option
+    if print_option:
+        print(str)
+    else:
+        output_string = output_string + str + '\n'
+
 ##### determining whether or not proof is possible (in Regular WFF)
 
 def base_wffs_mega_wff(start_wffs,end_wff,printer=False):
@@ -192,13 +204,13 @@ pNp_lines = []
 def print_indented_line(indents, wff, rule, parent_lines = []):
     global current_line, rules_used
     rules_parents = rule + ' ' + ', '.join([str(i) for i in parent_lines])
-    print("{0:<4}|{4}{1:<30} {2:>40} {3}".format(current_line, str(wff), '', rules_parents, "\t |"*indents))
+    printer("{0:<4}|{4}{1:<30} {2:>40} {3}".format(current_line, str(wff), '', rules_parents, "\t |"*indents))
     current_line += 1
     if rule != 's' and rule not in rules_used:
         rules_used.append(rule)
 
 def print_indented_underline(indents):
-    print("{0:<4} {1}----------".format('',"\t "*indents))
+    printer("{0:<4} {1}----------".format('',"\t "*indents))
 
 def prove_ApNp(p):
     global current_line
@@ -263,24 +275,29 @@ def prove_finish(start_wffs, end_wff):
 def print_proof(start_wffs,end_wff):
     global ApNp_lines, pNp_lines
     if not proof_possible(start_wffs, end_wff):
-        print("proof is not possible")
-        print([str(s) for s in start_wffs], str(end_wff))
+        printer("proof is not possible")
         return
     base_wffs, mega_wff = base_wffs_mega_wff(start_wffs,end_wff)
     pNp_lines = [-1 for i in range(len(base_wffs))]
-    print("    | {0} -> {1}".format(', '.join(start_wffs),str(end_wff)))
-    print('-----------------------------------'*3)
+    printer("    | {0} -> {1}".format(', '.join(start_wffs),str(end_wff)))
+    printer('-----------------------------------'*3)
     for s_wff in start_wffs:
         print_indented_line(0, str(s_wff), 's')
     if len(start_wffs) != 0:
-        print('----------')
+        printer('----------')
     # ApNp
     ApNp_lines = [prove_ApNp(p) for p in base_wffs]
     # recursion
     prove_mega_wff(mega_wff, base_wffs, [], 0)
     # final touches
     prove_finish(start_wffs,end_wff)
-    print(', '.join(start_wffs) + ' / ' + ', '.join(rules_used))
+    printer(', '.join(start_wffs) + ' / ' + ', '.join(rules_used))
+
+def REGULAR_get_proof_string(start_wffs,end_wff):
+    global print_option, output_string
+    print_option = False
+    print_proof(start_wffs,end_wff)
+    return output_string
 
 ##### main
 
