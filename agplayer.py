@@ -62,11 +62,9 @@ def home():
     form = StartForm()
     if request.method == 'POST':
         if form.game.data == "Ling":
-            form = LingForm()
-            return render_template('ling_index.html', form = form)
+            redirect(url_for('ling'))
         elif form.game.data == "WFF":
-            form = WffForm()
-            return render_template('wff_index.html', form = form)
+            redirect(url_for('wff'))
     return render_template('index.html', form = form)
 
 @app.route('/ling', methods = ['GET', 'POST'])
