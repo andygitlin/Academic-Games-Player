@@ -1,1 +1,1 @@
-web: python MrLing.py runserver
+web: python main.py runserver

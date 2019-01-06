@@ -4,7 +4,7 @@ import os
 from os import listdir
 from os.path import isfile, join
 # website stuff
-from flask import Flask, request, render_template, redirect, url_for, flash
+from flask import Flask, request, render_template, redirect, url_for, flash, Blueprint
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, SubmitField, SelectField, SelectMultipleField, RadioField, widgets
 from wtforms.validators import Required
@@ -910,10 +910,6 @@ def win():
 
 ################################################## website stuff
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'random string'
-app.debug = True
-
 # enable checkboxes
 class CheckboxField(SelectMultipleField):
     widget = widgets.ListWidget(prefix_label = False)
@@ -941,8 +937,10 @@ class StartForm(FlaskForm):
     yellowCubes = StringField("YELLOW")
     submit = SubmitField('Submit')
 
-@app.route('/', methods = ['GET', 'POST'])
-def home():
+ling_blueprint = Blueprint('ling', __name__, template_folder="templates")
+
+@ling_blueprint.route('/MrLing', methods = ['GET', 'POST'])
+def ling():
     global PLAYERONE, PLAYERTWO, PLAYERTHREE, COLOR_WILD, NUMBER_OF_LETTERS, DOUBLE_VOWEL, DOUBLE_CONSONANT, MUST_CONTAIN, MUST_NOT_CONTAIN, LETTER_TRANSFER, GENERALS, CLAUSES, PHRASES, USE_CUBES, CUBES
     form = StartForm()
     if request.method == 'POST':
@@ -979,12 +977,7 @@ def home():
         solution = win()
 
         # display solution
-        return render_template('result.html', sentence = solution, sentenceLength = len(solution.split()), player1 = PLAYERONE, player2 = PLAYERTWO, player3 = PLAYERTHREE, colorWild = COLOR_WILD, numLetters = NUMBER_OF_LETTERS, doubleVowel = DOUBLE_VOWEL, doubleConsonant = DOUBLE_CONSONANT, mustCotain = MUST_CONTAIN, mustNotContain = MUST_NOT_CONTAIN, letterTransfer = LETTER_TRANSFER, functions = GENERALS, clauses = CLAUSES, phrases = PHRASES)
-    return render_template('index.html', form = form)
-
-################################################## main
-
-if __name__ == '__main__':
-    app.run(host = '0.0.0.0', port = int(os.getenv('PORT', 5000)))
+        return render_template('LingResult.html', sentence = solution, sentenceLength = len(solution.split()), player1 = PLAYERONE, player2 = PLAYERTWO, player3 = PLAYERTHREE, colorWild = COLOR_WILD, numLetters = NUMBER_OF_LETTERS, doubleVowel = DOUBLE_VOWEL, doubleConsonant = DOUBLE_CONSONANT, mustCotain = MUST_CONTAIN, mustNotContain = MUST_NOT_CONTAIN, letterTransfer = LETTER_TRANSFER, functions = GENERALS, clauses = CLAUSES, phrases = PHRASES)
+    return render_template('MrLing.html', form = form)
 
 
