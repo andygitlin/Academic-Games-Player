@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+            <title>
+                Mr. Ling
+            </title>
+            <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet" type="text/css">
+            </link>
+        </meta>
+        <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+    </head>
+    <body>
+        {% block content %}
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+      {% for message in get_flashed_messages() %}
+        {{ message }}
+      {% endfor %}
+            <p class="player1">
+                {{ form.player1.label }} {{ form.player1() }}
+            </p>
+            <p class="player2and3">
+                {{ form.player2and3.label }} {{ form.player2and3() }}
+            </p>
+            <p class="colorWild">
+                {{ form.colorWild.label }} {{ form.colorWild() }}
+            </p>
+            <p class="numLetters">
+                {{ form.numLetters.label }} {{ form.numLetters() }}
+            </p>
+            <p class="doubleVowel">
+                {{ form.doubleVowel.label }} {{ form.doubleVowel() }}
+            </p>
+            <p class="doubleConsonant">
+                {{ form.doubleConsonant.label }}{{ form.doubleConsonant() }}
+            </p>
+            <p class="mustContain">
+                {{ form.mustContain.label }} {{ form.mustContain() }}
+            </p>
+            <p class="mustNotContain">
+                {{ form.mustNotContain.label }} {{ form.mustNotContain() }}
+            </p>
+            <p class="letterTransfer">
+                {{ form.letterTransfer.label }} {{ form.letterTransfer() }}
+            </p>
+            <p class="functions">
+                {{ form.functions.label }} {{ form.functions() }}
+            </p>
+            <p class="clauses">
+                {{ form.clauses.label }} {{ form.clauses() }}
+            </p>
+            <p class="phrases">
+                {{ form.phrases.label }} {{ form.phrases() }}
+            </p>
+            <p class="blackCubes">
+                {{ form.blackCubes.label }} {{ form.blackCubes() }}
+            </p>
+            <p class="greenCubes">
+                {{ form.greenCubes.label }} {{ form.greenCubes() }}
+            </p>
+            <p class="orangeCubes">
+                {{ form.orangeCubes.label }} {{ form.orangeCubes() }}
+            </p>
+            <p class="pinkCubes">
+                {{ form.pinkCubes.label }} {{ form.pinkCubes() }}
+            </p>
+            <p class="redCubes">
+                {{ form.redCubes.label }} {{ form.redCubes() }}
+            </p>
+            <p class="yellowCubes">
+                {{ form.yellowCubes.label }} {{ form.yellowCubes() }}
+            </p>
+            {{ form.submit() }}
+        </form>
+        {% endblock %}
+    </body>
+</html>

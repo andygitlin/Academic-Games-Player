@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+            <title>
+                Mr. Wff
+            </title>
+            <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet" type="text/css">
+            </link>
+        </meta>
+        <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+    </head>
+    <body>
+        {% block content %}
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+      {% for message in get_flashed_messages() %}
+        {{ message }}
+      {% endfor %}
+            <p class="premises">
+                {{ form.premises.label }} {{ form.premises() }}
+            </p>
+            <p class="conclusion">
+                {{ form.conclusion.label }} {{ form.conclusion() }}
+            </p>
+            {{ form.submit() }}
+        </form>
+        {% endblock %}
+    </body>
+</html>
