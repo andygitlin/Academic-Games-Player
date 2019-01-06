@@ -915,7 +915,7 @@ class CheckboxField(SelectMultipleField):
     widget = widgets.ListWidget(prefix_label = False)
     option_widget = widgets.CheckboxInput()
 
-class StartForm(FlaskForm):
+class LingForm(FlaskForm):
     player1 = SelectField("Player 1", choices = [("SV", "S-V"), ("SVDO", "S-V-DO"), ("SVIODO", "S-V-IO-DO"), ("SLVPN", "S-LV-PN"), ("SLVPA", "S-LV-PA"), ("SVDOOC(N)", "S-V-DO-OC(noun)"), ("SVDOOC(A)", "SV-DO-OC(adjective)"), ("SIMPLE", "simple"), ("COMPOUND", "compound"), ("COMPLEX", "complex"), ("COMPOUNDCOMPLEX", "compound-complex"), ("DECLARATIVE", "declarative"), ("INTERROGATIVE", "interrogative"), ("IMPERATIVE", "imperative"), ("EXCLAMATORY", "exclamatory"), ("INVERTED", "inverted")])
     player2and3 = SelectField("Player 2 and player 3", choices = [("NOUN_SUBJECT", "NOUN Subject"), ("NOUN_DIRECTOBJECT", "NOUN Direct Object"), ("NOUN_INDIRECTOBJECT", "NOUN Indirect Object"), ("NOUN_PREDICATENOUN", "NOUN Predicate Noun"), ("NOUN_OBJECTIVECOMPLEMENT", "NOUN Objective Complement"), ("NOUN_OBJECTOFPREPOSITION", "NOUN Object of the Preposition"), ("NOUN_APPOSITIVE", "NOUN Appositive"), ("NOUN_NOUNUSEDASADJECTIVE", "NOUN Noun Used as Adjective"), ("PRONOUN_SUBJECT", "PRONOUN Subject"), ("PRONOUN_DIRECTOBJECT", "PRONOUN Direct Object"), ("PRONOUN_INDIRECTOBJECT", "PRONOUN Indirect Object"), ("PRONOUN_PREDICATENOUN", "PRONOUN Predicate Noun"), ("PRONOUN_OBJECTIVECOMPLEMENT", "PRONOUN Objective Complement"), ("PRONOUN_OBJECTOFPREPOSITION", "PRONOUN Object of the Preposition"), ("PRONOUN_APPOSITIVE", "PRONOUN Appositive"), ("VERB_MAINVERB", "VERB Main Verb"), ("VERB_VERBAL", "VERB Verbal"), ("VERB_INFINITIVE", "VERB Infinitive"), ("VERB_GERUND", "VERB Gerund"), ("VERB_PARTICIPLE", "VERB Participle"), ("VERB_AUXILIARY", "VERB Auxiliary"), ("ADJECTIVE_NOUNMODIFIER", "ADJECTIVE Noun Modifier"), ("ADJECTIVE_PRONOUNMODIFIER", "ADJECTIVE Pronoun Modifier"), ("ADJECTIVE_PREDICATEADJECTIVE", "ADJECTIVE Predicate Adjective"), ("ADJECTIVE_OBJECTIVECOMPLEMENT", "ADJECTIVE Objective Complement"), ("ADJECTIVE_ADJACENTADJECTIVE", "ADJECTIVE Adjacent Adjective"), ("ADVERB_VERBMODIFIER", "ADVERB Verb Modifier"), ("ADVERB_ADJECTIVEMODIFIER", "ADVERB Adjective Modifier"), ("ADVERB_ADVERBMODIFIER", "ADVERB Adverb Modifier"), ("PREPOSITION_INTROTOADJECTIVE", "PREPOSITION Introductory word in an Adjective Phrase"), ("PREPOSITION_INTROTOADVERB", "PREPOSITION Introductory word in an Adverb Phrase"), ("CONJUNCTION_SUBORDINATOR", "CONJUNCTION Subordinator"), ("CONJUNCTION_CONJUNCTIVE", "CONJUNCTION Conjunctive Adverb"), ("INTERJECTION_", "INTERJECTION ")])
     colorWild = SelectField("Color Wild", choices = [("", "None"), ("BLACK", "Black"), ("GREEN", "Green"), ("ORANGE", "Orange"), ("PINK", "Pink"), ("RED", "Red"), ("YELLOW", "Yellow")])
@@ -942,7 +942,7 @@ ling_blueprint = Blueprint('ling', __name__, template_folder="templates")
 @ling_blueprint.route('/MrLing', methods = ['GET', 'POST'])
 def ling():
     global PLAYERONE, PLAYERTWO, PLAYERTHREE, COLOR_WILD, NUMBER_OF_LETTERS, DOUBLE_VOWEL, DOUBLE_CONSONANT, MUST_CONTAIN, MUST_NOT_CONTAIN, LETTER_TRANSFER, GENERALS, CLAUSES, PHRASES, USE_CUBES, CUBES
-    form = StartForm()
+    form = LingForm()
     if request.method == 'POST':
         # first 3 moves
         PLAYERONE = form.player1.data if form.player1.data != "None" else ""

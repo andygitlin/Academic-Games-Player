@@ -1,6 +1,18 @@
 import copy
 import time
 
+# redirect print
+from io import StringIO
+import sys
+
+# website stuff
+from flask import Flask, request, render_template, redirect, url_for, flash, Blueprint
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
+from wtforms.validators import Required
+import re
+
+
 wff_length_bound = 10
 
 def wff_length(wff_str):
@@ -210,6 +222,33 @@ def look_for_proof(start_wffs,end_wff):
             break
     print_proof(wff)
 
+
+################################################## website stuff
+
+wff_blueprint = Blueprint('wff', __name__, template_folder="templates")
+
+class WffForm(FlaskForm):
+    premises = StringField("Premises (separate with comma):")
+    conclusion = StringField("Conclusion:")
+    submit = SubmitField()
+
+@wff_blueprint.route('/MrWff', methods = ['GET', 'POST'])
+def wff():
+    form = WffForm()
+    if request.method == 'POST':
+        start_wff = list(re.split(r", *", form.premises.data)) if form.premises.data else []
+        end_wff = form.conclusion.data
+        
+        # code adapted from https://stackoverflow.com/questions/1218933/can-i-redirect-the-stdout-in-python-into-some-sort-of-string-buffer
+        old_stdout = sys.stdout
+        sys.stdout = mystdout = StringIO()
+        look_for_proof(start_wff, end_wff)
+        sys.stdout = old_stdout
+        solution = mystdout.getvalue()
+
+        return render_template('WffResult.html', solution=solution)
+    return render_template('MrWff.html', form=form)
+
 ##### test cases
 
 def reset_all():
@@ -274,11 +313,11 @@ def test10():
 
 ##### main
 
-if __name__ == '__main__':
-    for test in [test9,test4,test6,test7,test8,test5,test_nick_wang]:
-        start_time = time.time()
-        test()
-        reset_all()
-        end_time = time.time()
-        print(end_time-start_time)
+# if __name__ == '__main__':
+#     for test in [test9,test4,test6,test7,test8,test5,test_nick_wang]:
+#         start_time = time.time()
+#         test()
+#         reset_all()
+#         end_time = time.time()
+#         print(end_time-start_time)
 
