@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from MrLing import ling_blueprint
-from MrWff import wff_blueprint
+from MrBasicWff import wff_blueprint
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'random string'
