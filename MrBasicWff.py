@@ -1,5 +1,7 @@
 import copy
 import time
+import itertools
+import numpy as np
 
 # redirect print
 from io import StringIO
@@ -12,8 +14,20 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import Required
 import re
 
+##### printing
 
-wff_length_bound = 10
+print_option = True
+output_string = ""
+
+def printer(str):
+    global print_option
+    if print_option:
+        print(str)
+    else:
+        global output_string
+        output_string = output_string + str + '\n'
+
+##### basic functions
 
 def wff_length(wff_str):
     counter = 0
@@ -34,15 +48,13 @@ class WFF:
     def __str__(self):
         if not self.connector:
             raise ValueError
-        if not self.str:
-            self.str = self.connector + str(self.left) + str(self.right)
+        self.str = self.connector + str(self.left) + str(self.right)
         return self.str
 
     def __len__(self):
         if not self.connector:
             raise ValueError
-        if not self.len:
-            self.len = 1 + len(self.left) + len(self.right)
+        self.len = 1 + len(self.left) + len(self.right)
         return self.len
 
 class Base_WFF(WFF):
@@ -88,9 +100,14 @@ class WFF_Info:
     def set_parent_lines(self, parent_lines):
         self.parent_lines = parent_lines
 
+##### searching for proof (in Basic WFF)
+
+wff_length_bound = np.inf
 nice_a_wffs = []
 WFF_Dict = {}
 current_line = 1
+rules_used = []
+nice_k_wffs = []
 
 def print_line(wff):
     global current_line
@@ -107,9 +124,10 @@ def print_line(wff):
     if not wff_info.parent_lines:
         parent_lines = ', '.join(parents_list)
         wff_info.set_parent_lines(parent_lines)
-    q = "{0:<2}) | {1:<12} {2:>10} {3}".format(current_line, str(wff), rule, wff_info.parent_lines)
-    print(q)
+    printer("{0:<2}) | {1:<12} {2:>15} {3}".format(current_line, str(wff), rule, wff_info.parent_lines))
     current_line += 1
+    if rule != 's' and rule not in rules_used:
+        rules_used.append(rule)
 
 def print_proof(wff):
     global current_line
@@ -126,17 +144,27 @@ def print_proof(wff):
 
 def start(start_wffs):
     for wff in start_wffs:
-        WFF_Dict[read_in_wff(wff)] = WFF_Info([],'s')
+        w = read_in_wff(wff)
+        WFF_Dict[w] = WFF_Info([],'s')
+        add_nice_k_wffs(w)
 
 def apply_rules(wff1,wff2=None):
     new_keys = []
     new_values = []
     if wff2:
         # Ki
-        new_keys.append(WFF('K',wff1,wff2))
-        new_values.append(WFF_Info([wff1,wff2],'Ki'))
-        new_keys.append(WFF('K',wff2,wff1))
-        new_values.append(WFF_Info([wff2,wff1],'Ki'))
+        w12 = WFF('K',wff1,wff2)
+        w21 = WFF('K',wff2,wff1)
+        for i in range(len(nice_k_wffs)-1,-1,-1):
+            k_wff = nice_k_wffs[i]
+            if str(k_wff) == str(w12):
+                new_keys.append(k_wff)
+                new_values.append(WFF_Info([wff1,wff2],'Ki'))
+                nice_k_wffs.pop(i)
+            elif str(k_wff) == str(w21):
+                new_keys.append(k_wff)
+                new_values.append(WFF_Info([wff2,wff1],'Ki'))
+                nice_k_wffs.pop(i)
         # Co
         if wff1.connector == 'C' and str(wff1.left) == str(wff2):
             new_keys.append(wff1.right)
@@ -195,11 +223,29 @@ def add_nice_a_wffs(wff,end=False):
             elif wff.connector == 'E':
                 add_nice_a_wffs(wff.left,True)
                 add_nice_a_wffs(wff.right,True)
+
+def add_nice_k_wffs(wff,end=False):
+    if isinstance(wff,WFF):
+        if end:
+            if wff.connector == 'K':
+                nice_k_wffs.append(wff)
+                add_nice_k_wffs(wff.left,True)
+                add_nice_k_wffs(wff.right,True)
+            elif wff.connector == 'A':
+                add_nice_k_wffs(wff.left,True)
+                add_nice_k_wffs(wff.right,True)
+        if not end:
+            if wff.connector == 'C':
+                add_nice_k_wffs(wff.left,True)
+            elif wff.connector == 'E':
+                add_nice_k_wffs(wff.left,True)
+                add_nice_k_wffs(wff.right,True)
                             
 def look_for_proof(start_wffs,end_wff):
     start(start_wffs)
     end = read_in_wff(end_wff)
     add_nice_a_wffs(end,True)
+    add_nice_k_wffs(end,True)
     L = WFF_Dict.keys()
     while str(end) not in [str(l) for l in L]:
         current_wffs = [k for k in WFF_Dict.keys()]
@@ -209,19 +255,26 @@ def look_for_proof(start_wffs,end_wff):
             for j in range(i,len(current_wffs)):
                 apply_rules(current_wffs[i],current_wffs[j])
         L = WFF_Dict.keys()
-    print("    | {0} -> {1}".format(', '.join(start_wffs),str(end_wff)))
-    print('-----------------------------------')
+    printer("    | {0} -> {1}".format(', '.join(start_wffs),str(end_wff)))
+    printer('-----------------------------------')
     for k in WFF_Dict.keys():
         if WFF_Dict[k].rule == 's':
             print_proof(k)
-    print('----------')
+    printer('----------')
     wff = None
     for k in WFF_Dict.keys():
         if str(k) == str(end_wff):
             wff = k
             break
     print_proof(wff)
+    printer(', '.join(start_wffs) + ' / ' + ', '.join(rules_used))
 
+def BASIC_get_proof_string(start_wffs,end_wff):
+    global print_option, output_string
+    print_option = False
+    output_string = ""
+    look_for_proof(start_wffs,end_wff)
+    return output_string
 
 ################################################## website stuff
 
@@ -252,10 +305,12 @@ def wff():
 ##### test cases
 
 def reset_all():
-    global nice_a_wffs, WFF_Dict, current_line
+    global nice_a_wffs, WFF_Dict, current_line, rules_used, nice_k_wffs
     nice_a_wffs = []
     WFF_Dict = {}
     current_line = 1
+    rules_used = []
+    nice_k_wffs = []
 
 def test1():
     wff = WFF('C',Base_WFF('r'),Base_WFF('p'))
@@ -298,7 +353,7 @@ def test7():
     look_for_proof(['EAsrp','s'],'KAsqKpp')
 
 def test_nick_wang():
-    look_for_proof(['EKrps','Kpr'],'KAqpKrs')
+    look_for_proof(['EKrps','Kpr'],'KKrsAqp')
 
 def test8():
     #look_for_proof(['Nr','NNs','NNKNrp'],'KNNKNrpKNrNNs')
@@ -310,6 +365,12 @@ def test9():
 
 def test10():
     look_for_proof(['p','q'],'KKppKqq')
+
+def test11():
+    look_for_proof(['NKsr','Np'],'KNpNKsr')
+
+def test12():
+    look_for_proof(['EKsrKCpqs','Eqp','Ksp'],'AAAKrsNpNqNr')
 
 ##### main
 

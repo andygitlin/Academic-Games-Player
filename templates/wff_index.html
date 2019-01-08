@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Mr. WFF</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+{% block content %}
+  <form method="POST">
+      {{ form.hidden_tag() }}
+
+      {% for message in get_flashed_messages() %}
+        {{ message }}
+      {% endfor %}
+      <p class="gametype">{{ form.gametype.label }} {{ form.gametype() }}</p>
+      <p class="premises">{{ form.premises.label }} {{ form.premises() }}</p>
+      <p class="conclusion">{{ form.conclusion.label }} {{ form.conclusion() }}</p>
+      {{ form.submit() }}
+  </form>
+{% endblock %}
+</body>
+</html>

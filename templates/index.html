@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>AG Player</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+{% block content %}
+  <form method="POST">
+      {{ form.hidden_tag() }}
+
+      {% for message in get_flashed_messages() %}
+        {{ message }}
+      {% endfor %}
+      <p class="game">{{ form.game.label }} {{ form.game() }}</p>
+      {{ form.submit() }}
+  </form>
+{% endblock %}
+</body>
+</html>
