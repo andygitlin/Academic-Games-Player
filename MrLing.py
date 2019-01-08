@@ -3,15 +3,13 @@ import pandas as pd
 import os
 from os import listdir
 from os.path import isfile, join
-<<<<<<< HEAD
-=======
+
 # website stuff
 from flask import Flask, request, render_template, redirect, url_for, flash, Blueprint
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, SubmitField, SelectField, SelectMultipleField, RadioField, widgets
 from wtforms.validators import Required
 import re
->>>>>>> 82760783c193510353a394ff3cadb95233d40db8
 
 ################################################## words, dictionary
 
@@ -986,4 +984,3 @@ def ling():
     return render_template('MrLing.html', form = form)
 
 
->>>>>>> 82760783c193510353a394ff3cadb95233d40db8
