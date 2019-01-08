@@ -909,8 +909,6 @@ def construct_correct_sentence():
 def win():
     return construct_correct_sentence()
 
-<<<<<<< HEAD
-=======
 ################################################## website stuff
 
 # enable checkboxes
