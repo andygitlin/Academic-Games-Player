@@ -12,7 +12,7 @@ app.register_blueprint(wff_blueprint)
 
 @app.route("/")
 def home():
-    return '<a href="/MrLing">Ling</a><a href="/MrWff">Wff</a>'
+    return '<p><a href="/MrLing">Ling</a></p><p><a href="/MrWff">Wff</a></p>'
 
 if __name__ == '__main__':
     app.run(host = '0.0.0.0', port = int(os.getenv('PORT', 5000)))
